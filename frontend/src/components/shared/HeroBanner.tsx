@@ -51,29 +51,29 @@ export function HeroBanner() {
 						<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
 							<div className="flex items-start gap-3 p-3 bg-card/50 border border-white/5 rounded-sm">
 								<div className="p-2 bg-primary/10 rounded-sm text-primary shrink-0">
-									<Grid3X3 className="w-5 h-5" />
+									<Zap className="w-5 h-5" />
 								</div>
 								<div>
-									<div className="text-sm font-bold text-white">Pick a Slot</div>
-									<div className="text-xs text-muted-foreground">Choose 1 of 9 slots</div>
+									<div className="text-sm font-bold text-white">Provably Fair</div>
+									<div className="text-xs text-muted-foreground">On-chain randomness</div>
 								</div>
 							</div>
 							<div className="flex items-start gap-3 p-3 bg-card/50 border border-white/5 rounded-sm">
 								<div className="p-2 bg-secondary/10 rounded-sm text-secondary shrink-0">
-									<Coins className="w-5 h-5" />
+									<Trophy className="w-5 h-5" />
 								</div>
 								<div>
-									<div className="text-sm font-bold text-white">Pay Entry Fee</div>
-									<div className="text-xs text-muted-foreground">Small fee in SUI</div>
+									<div className="text-sm font-bold text-white">Win Big</div>
+									<div className="text-xs text-muted-foreground">Get SUIYAN tokens</div>
 								</div>
 							</div>
 							<div className="flex items-start gap-3 p-3 bg-card/50 border border-white/5 rounded-sm">
 								<div className="p-2 bg-accent/10 rounded-sm text-accent shrink-0">
-									<Trophy className="w-5 h-5" />
+									<Grid3X3 className="w-5 h-5" />
 								</div>
 								<div>
-									<div className="text-sm font-bold text-white">Win Prize</div>
-									<div className="text-xs text-muted-foreground">Get SUIYAN tokens</div>
+									<div className="text-sm font-bold text-white">Create Your Own</div>
+									<div className="text-xs text-muted-foreground">Earn entry fees</div>
 								</div>
 							</div>
 						</div>
