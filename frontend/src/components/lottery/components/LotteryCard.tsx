@@ -36,34 +36,28 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 
 				<div className="p-5 space-y-6">
 					{/* Header */}
-					<div className="flex justify-between items-start">
-						<div>
-							<div className="flex items-center gap-2 mb-1">
-								<span
-									className={`rounded-none border-0 px-2 py-0.5 text-[10px] tracking-widest uppercase font-bold ${
-										statusLabel === "active"
-											? "bg-green-500/20 text-green-400"
-											: "bg-red-500/20 text-red-400"
-									}`}
-								>
-									{statusLabel}
-								</span>
-								<span className="text-xs text-muted-foreground font-mono">
-									ID: {game.id.slice(0, 6)}
-								</span>
-							</div>
-							<div className="flex items-center gap-2 text-primary">
+					<div className="space-y-3">
+						<div className="flex items-center gap-2">
+							<span
+								className={`rounded-none border-0 px-2 py-0.5 text-[10px] tracking-widest uppercase font-bold ${
+									statusLabel === "active"
+										? "bg-green-500/20 text-green-400"
+										: "bg-red-500/20 text-red-400"
+								}`}
+							>
+								{statusLabel}
+							</span>
+							<span className="text-xs text-muted-foreground font-mono">
+								ID: {game.id.slice(0, 6)}
+							</span>
+						</div>
+						<div className="flex justify-between items-center">
+							<div className="flex items-center gap-2 text-secondary">
 								<Zap className="w-4 h-4" />
 								<span className="text-lg font-bold">{game.fee} SUI</span>
 							</div>
-						</div>
-
-						<div className="text-right">
-							<div className="text-xs text-muted-foreground uppercase tracking-wider">
-								Prize Pool
-							</div>
 							<div className="text-xl font-bold text-primary drop-shadow-sm">
-								{game.prize} SUIYAN
+								{game.prize} <span className="text-primary">SUIYAN</span>
 							</div>
 						</div>
 					</div>
