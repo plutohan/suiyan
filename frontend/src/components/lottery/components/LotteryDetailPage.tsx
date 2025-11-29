@@ -324,7 +324,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 						<div className="relative border border-primary/20 p-6 rounded-sm overflow-hidden">
 							<div
 								className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-								style={{ backgroundImage: "url('https://supersuiyan.xyz/images/footer-cta-min.jpg')" }}
+								style={{ backgroundImage: "url('/prize-bg.jpg')" }}
 							/>
 							<div className="absolute inset-0 bg-black/60" />
 
