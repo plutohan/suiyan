@@ -186,7 +186,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 			<div className="container mx-auto px-4 py-8 min-h-screen flex flex-col">
 				<button
 					type="button"
-					onClick={() => navigate("/")}
+					onClick={() => navigate("/lottery")}
 					className="gap-2 text-muted-foreground hover:text-white hover:bg-white/5 font-mono uppercase tracking-wider px-4 py-2 inline-flex items-center w-fit"
 					aria-label="Back to lottery list"
 				>
@@ -215,7 +215,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 			<div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
 				<button
 					type="button"
-					onClick={() => navigate("/")}
+					onClick={() => navigate("/lottery")}
 					className="gap-2 text-muted-foreground hover:text-white hover:bg-white/5 font-mono uppercase tracking-wider px-4 py-2 inline-flex items-center bg-transparent border-0"
 				>
 					<ArrowLeft className="w-4 h-4" />
