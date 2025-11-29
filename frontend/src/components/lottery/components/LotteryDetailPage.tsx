@@ -35,6 +35,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 	useEffect(() => {
 		setSelectedSlot(null)
+		window.scrollTo(0, 0)
 	}, [gameId])
 
 	useEffect(() => {
