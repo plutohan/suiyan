@@ -326,7 +326,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 								className="absolute inset-0 bg-cover bg-center bg-no-repeat"
 								style={{ backgroundImage: "url('/prize-bg.jpg')" }}
 							/>
-							<div className="absolute inset-0 bg-black/60" />
+							<div className="absolute inset-0 bg-black/80" />
 
 							<div className="relative z-10">
 								<div className="inline-block px-2 py-1 bg-primary text-black font-bold text-xs uppercase skew-x-[-10deg] mb-4">
