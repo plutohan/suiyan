@@ -1,6 +1,8 @@
-import { Zap, Grid3X3, Trophy, Coins } from "lucide-react"
+import { Zap, Grid3X3, Trophy, Coins, Play } from "lucide-react"
+import { useNavigation } from "../../providers/navigation/NavigationContext"
 
 export function HeroBanner() {
+	const { navigate } = useNavigation()
 	return (
 		<div className="relative w-full mb-12 group">
 			{/* Main Container with Tech Borders */}
@@ -76,8 +78,15 @@ export function HeroBanner() {
 							</div>
 						</div>
 
-						{/* Buy Button */}
-						<div className="pt-4">
+						{/* Action Buttons */}
+						<div className="pt-4 flex flex-wrap gap-4">
+							<button
+								onClick={() => navigate("/lottery")}
+								className="inline-flex items-center gap-2 h-12 px-6 bg-secondary text-black hover:bg-cyan-400 font-bold text-base uppercase tracking-wider transition-all hover:scale-105"
+							>
+								<Play className="w-5 h-5" />
+								Play Now
+							</button>
 							<a
 								href="https://aftermath.finance/trade?from=SUI&to=SUIYAN"
 								target="_blank"
