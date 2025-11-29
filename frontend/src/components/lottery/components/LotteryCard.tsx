@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { LotterySummary } from "../lotteryApi"
-import { Trophy, Users, Zap } from "lucide-react"
+import { Trophy, Zap } from "lucide-react"
 
 type Props = {
 	game: LotterySummary
@@ -12,7 +12,6 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 	const statusLabel = isActive ? "active" : "closed"
 
 	const slots = game.slots.length ? game.slots : Array(9).fill(false)
-	const participants = slots.filter((slot) => slot).length
 
 	const getSlotStyle = (isTaken: boolean, index: number) => {
 		const isWinning = !isActive && index === game.winningSlot
@@ -53,9 +52,10 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 									ID: {game.id.slice(0, 6)}
 								</span>
 							</div>
-							<h3 className="text-xl font-bold text-white tracking-wide group-hover:text-primary transition-colors" style={{ fontFamily: 'Bangers, system-ui' }}>
-								Lottery #{game.id.slice(-4)}
-							</h3>
+							<div className="flex items-center gap-2 text-primary">
+								<Zap className="w-4 h-4" />
+								<span className="text-lg font-bold">{game.fee} SUI</span>
+							</div>
 						</div>
 
 						<div className="text-right">
@@ -94,29 +94,6 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 								</div>
 							)
 						})}
-					</div>
-
-					{/* Footer Stats */}
-					<div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
-						<div className="flex items-center gap-3 text-sm text-gray-400">
-							<div className="p-2 bg-secondary/10 rounded-sm text-secondary">
-								<Users className="w-4 h-4" />
-							</div>
-							<div>
-								<div className="text-white font-bold">{participants}/9</div>
-								<div className="text-[10px] uppercase">Slots Filled</div>
-							</div>
-						</div>
-
-						<div className="flex items-center gap-3 text-sm text-gray-400 justify-end">
-							<div className="text-right">
-								<div className="text-white font-bold">{game.fee} SUI</div>
-								<div className="text-[10px] uppercase">Entry Fee</div>
-							</div>
-							<div className="p-2 bg-primary/10 rounded-sm text-primary">
-								<Zap className="w-4 h-4" />
-							</div>
-						</div>
 					</div>
 				</div>
 
