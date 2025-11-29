@@ -3,7 +3,9 @@ import {
 	useSignAndExecuteTransaction,
 	useCurrentAccount,
 	useSuiClientQuery,
+	ConnectButton,
 } from "@mysten/dapp-kit"
+import { Wallet } from "lucide-react"
 import { Transaction } from "@mysten/sui/transactions"
 import {
 	PACKAGE_ID,
@@ -36,6 +38,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 	)
 	const [feeInSui, setFeeInSui] = useState<string>(mistToSui(DEFAULT_FEE))
 	const [localStatus, setLocalStatus] = useState<string>("")
+	const [showConnectWallet, setShowConnectWallet] = useState(false)
 
 	// Query SUIYAN coins
 	const { data: suiyanCoins } = useSuiClientQuery(
@@ -51,6 +54,12 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 
 	const handleCreateLottery = async () => {
 		if (isLoading) return
+
+		// Check if wallet is connected
+		if (!currentAccount) {
+			setShowConnectWallet(true)
+			return
+		}
 
 		// Convert to base units (9 decimals for both SUIYAN tokens and SUI)
 		const prizeAmount = suiToMist(parseFloat(prizeInTokens) || 0)
@@ -215,6 +224,47 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 				<p className="mt-3 text-xs text-muted-foreground font-mono">
 					{localStatus}
 				</p>
+			)}
+
+			{/* Connect Wallet Modal */}
+			{showConnectWallet && (
+				<div
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 animate-slide-up"
+					role="dialog"
+					aria-modal="true"
+					aria-label="Connect wallet"
+					onClick={() => setShowConnectWallet(false)}
+				>
+					<div
+						className="bg-card border border-primary/30 shadow-2xl max-w-md w-full p-8 space-y-6 rounded-sm"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className="text-center">
+							<div className="text-5xl mb-3">
+								<Wallet className="w-16 h-16 text-primary mx-auto" />
+							</div>
+							<h3
+								className="text-2xl font-bold text-white uppercase tracking-wider"
+								style={{ fontFamily: "Bangers, system-ui" }}
+							>
+								Connect Wallet
+							</h3>
+							<p className="text-muted-foreground mt-2">
+								Please connect your wallet to create a lottery
+							</p>
+						</div>
+						<div className="flex justify-center">
+							<ConnectButton />
+						</div>
+						<button
+							type="button"
+							onClick={() => setShowConnectWallet(false)}
+							className="w-full px-6 py-3 border border-white/10 font-bold uppercase tracking-wider hover:bg-white/5 transition-all bg-transparent text-white"
+						>
+							Cancel
+						</button>
+					</div>
+				</div>
 			)}
 		</div>
 	)
