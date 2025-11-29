@@ -104,7 +104,7 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 							</div>
 							<div>
 								<div className="text-white font-bold">{participants}/9</div>
-								<div className="text-[10px] uppercase">Players</div>
+								<div className="text-[10px] uppercase">Slots Filled</div>
 							</div>
 						</div>
 

@@ -341,7 +341,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 									</div>
 									<div className="space-y-1">
 										<div className="text-xs text-muted-foreground uppercase">
-											Participants
+											Slots Filled
 										</div>
 										<div className="text-xl font-bold text-white flex items-center gap-1">
 											<Users className="w-4 h-4 text-secondary" />{" "}
