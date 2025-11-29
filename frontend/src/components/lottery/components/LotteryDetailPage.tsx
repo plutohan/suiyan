@@ -2,10 +2,19 @@ import { FC, useEffect, useMemo, useState } from "react"
 import { useNavigation } from "../../../providers/navigation/NavigationContext"
 import { LotteryGrid } from "./LotteryGrid"
 import { LotterySummary, fetchLotteryDetail } from "../lotteryApi"
-import { useCurrentAccount, useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit"
-import { mistToSui, PACKAGE_ID, RANDOM_OBJECT_ID } from "../../../config/constants"
+import {
+	ConnectButton,
+	useCurrentAccount,
+	useSignAndExecuteTransaction,
+	useSuiClient,
+} from "@mysten/dapp-kit"
+import {
+	mistToSui,
+	PACKAGE_ID,
+	RANDOM_OBJECT_ID,
+} from "../../../config/constants"
 import { Transaction } from "@mysten/sui/transactions"
-import { ArrowLeft, Users, Zap, Trophy, Crosshair } from "lucide-react"
+import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet } from "lucide-react"
 
 type Props = {
 	gameId: string
@@ -21,6 +30,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null)
 	const [showConfirm, setShowConfirm] = useState(false)
+	const [showConnectWallet, setShowConnectWallet] = useState(false)
 	const [statusMessage, setStatusMessage] = useState<string>("")
 
 	useEffect(() => {
@@ -45,12 +55,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 	const handleSlotSelect = (slot: number) => {
 		if (!lottery) return
-		if (!lottery.isActive || lottery.slots[slot]) {
-			setSelectedSlot(slot)
-			return
-		}
 		setSelectedSlot(slot)
-		setShowConfirm(true)
 	}
 
 	const handlePickSlot = async () => {
@@ -80,7 +85,9 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 				{ transaction: tx },
 				{
 					onSuccess: async (result) => {
-						setStatusMessage(`Slot picked! Digest: ${result.digest}`)
+						setStatusMessage(
+							`Slot picked! Digest: ${result.digest}`
+						)
 
 						setShowConfirm(false)
 						setIsSubmitting(false)
@@ -113,8 +120,13 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 		currentAccount?.address && lottery?.winner
 			? currentAccount.address === lottery.winner
 			: false
-	const canCollectFee = isCreator && lottery?.remainingFeeMist && lottery.remainingFeeMist > 0
-	const canCollectPrize = isWinner && lottery?.prizeMist && lottery.prizeMist > 0 && !lottery.prizeClaimed
+	const canCollectFee =
+		isCreator && lottery?.remainingFeeMist && lottery.remainingFeeMist > 0
+	const canCollectPrize =
+		isWinner &&
+		lottery?.prizeMist &&
+		lottery.prizeMist > 0 &&
+		!lottery.prizeClaimed
 
 	const handleCollectFee = async () => {
 		if (!lottery || !isCreator) return
@@ -130,7 +142,9 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 				{ transaction: tx },
 				{
 					onSuccess: async (result) => {
-						setStatusMessage(`Fees collected! Digest: ${result.digest}`)
+						setStatusMessage(
+							`Fees collected! Digest: ${result.digest}`
+						)
 						setIsSubmitting(false)
 						setTimeout(() => {
 							window.location.reload()
@@ -162,7 +176,9 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 				{ transaction: tx },
 				{
 					onSuccess: async (result) => {
-						setStatusMessage(`Prize collected! Digest: ${result.digest}`)
+						setStatusMessage(
+							`Prize collected! Digest: ${result.digest}`
+						)
 						setIsSubmitting(false)
 						setTimeout(() => {
 							window.location.reload()
@@ -179,7 +195,6 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 			setIsSubmitting(false)
 		}
 	}
-
 
 	if (!lottery && !isLoading) {
 		return (
@@ -288,7 +303,8 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 										Available
 									</div>
 									<div className="flex items-center gap-2">
-										<div className="w-3 h-3 bg-secondary"></div> Selected
+										<div className="w-3 h-3 bg-secondary"></div>{" "}
+										Selected
 									</div>
 									<div className="flex items-center gap-2">
 										<div className="w-3 h-3 bg-red-900/50 border border-red-500/50"></div>{" "}
@@ -345,18 +361,23 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 										</div>
 										<div className="text-xl font-bold text-white flex items-center gap-1">
 											<Users className="w-4 h-4 text-secondary" />{" "}
-											{lottery.slots.filter((s) => s).length} /{" "}
-											{lottery.slotCount}
+											{
+												lottery.slots.filter((s) => s)
+													.length
+											}{" "}
+											/ {lottery.slotCount}
 										</div>
 									</div>
+									{isActive && availableSlots > 0 && (
 									<div className="space-y-1">
 										<div className="text-xs text-muted-foreground uppercase">
-											Available
+											Win Odds
 										</div>
 										<div className="text-xl font-bold text-green-400 flex items-center gap-1">
-											{availableSlots}
+											1/{availableSlots} ({(100 / availableSlots).toFixed(1)}%)
 										</div>
 									</div>
+								)}
 									<div className="space-y-1">
 										<div className="text-xs text-muted-foreground uppercase">
 											Creator Fee
@@ -371,7 +392,10 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 						{/* Action Panel */}
 						<div className="bg-card border border-white/10 p-6 rounded-sm">
-							<h4 className="text-lg font-bold text-white mb-4 uppercase tracking-wider" style={{ fontFamily: "Bangers, system-ui" }}>
+							<h4
+								className="text-lg font-bold text-white mb-4 uppercase tracking-wider"
+								style={{ fontFamily: "Bangers, system-ui" }}
+							>
 								Actions
 							</h4>
 
@@ -387,19 +411,23 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 									</div>
 								)}
 								<div className="flex justify-between items-center text-sm">
-									<span className="text-muted-foreground">Entry Fee:</span>
+									<span className="text-muted-foreground">
+										Entry Fee:
+									</span>
 									<span className="text-primary font-bold font-mono">
 										{lottery.fee} SUI
 									</span>
 								</div>
 
 								<button
-									onClick={() =>
-										selectedSlot !== null &&
-										isActive &&
-										!lottery.slots[selectedSlot] &&
+									onClick={() => {
+										if (selectedSlot === null || !isActive || lottery.slots[selectedSlot]) return
+										if (!currentAccount) {
+											setShowConnectWallet(true)
+											return
+										}
 										setShowConfirm(true)
-									}
+									}}
 									disabled={
 										!isActive ||
 										selectedSlot === null ||
@@ -426,7 +454,8 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 												disabled={isSubmitting}
 												className="w-full h-12 bg-secondary text-black font-bold uppercase tracking-wider hover:bg-cyan-400 transition-all disabled:opacity-50"
 											>
-												COLLECT FEE ({lottery.remainingFee} SUI)
+												COLLECT FEE (
+												{lottery.remainingFee} SUI)
 											</button>
 										)}
 										{canCollectPrize && (
@@ -436,7 +465,10 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 												className="w-full h-12 bg-primary text-black font-bold uppercase tracking-wider hover:bg-yellow-400 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
 											>
 												<Trophy className="w-5 h-5" />
-												COLLECT PRIZE ({lottery.prize} SUIYAN)
+												COLLECT PRIZE ({
+													lottery.prize
+												}{" "}
+												SUIYAN)
 											</button>
 										)}
 									</div>
@@ -513,6 +545,45 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 								{isSubmitting ? "Processing..." : "CONFIRM"}
 							</button>
 						</div>
+					</div>
+				</div>
+			)}
+			{showConnectWallet && (
+				<div
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4 animate-slide-up"
+					role="dialog"
+					aria-modal="true"
+					aria-label="Connect wallet"
+					onClick={() => setShowConnectWallet(false)}
+				>
+					<div
+						className="bg-card border border-primary/30 shadow-2xl max-w-md w-full p-8 space-y-6 rounded-sm"
+						onClick={(e) => e.stopPropagation()}
+					>
+						<div className="text-center">
+							<div className="text-5xl mb-3">
+								<Wallet className="w-16 h-16 text-primary mx-auto" />
+							</div>
+							<h3
+								className="text-2xl font-bold text-white uppercase tracking-wider"
+								style={{ fontFamily: "Bangers, system-ui" }}
+							>
+								Connect Wallet
+							</h3>
+							<p className="text-muted-foreground mt-2">
+								Please connect your wallet to pick a slot
+							</p>
+						</div>
+						<div className="flex justify-center">
+							<ConnectButton />
+						</div>
+						<button
+							type="button"
+							onClick={() => setShowConnectWallet(false)}
+							className="w-full px-6 py-3 border border-white/10 font-bold uppercase tracking-wider hover:bg-white/5 transition-all bg-transparent text-white"
+						>
+							Cancel
+						</button>
 					</div>
 				</div>
 			)}

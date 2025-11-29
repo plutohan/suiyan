@@ -47,7 +47,7 @@ const App: React.FC = () => {
     <NavigationProvider>
       <div className="min-h-screen gradient-bg">
         <NavBar />
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
           <Pages />
         </div>
       </div>

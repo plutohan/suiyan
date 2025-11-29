@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useState } from "react"
 import { useSignAndExecuteTransaction } from "@mysten/dapp-kit"
 import { Transaction } from "@mysten/sui/transactions"
 import {
@@ -6,6 +6,7 @@ import {
 	RANDOM_OBJECT_ID,
 	mistToSui,
 } from "../../../config/constants"
+import { AlertTriangle } from "lucide-react"
 
 interface LotteryData {
 	slots: boolean[]
@@ -41,6 +42,17 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 	onLotteryUpdate: _onLotteryUpdate,
 }) => {
 	const { mutate: signAndExecute } = useSignAndExecuteTransaction()
+	const [showConfirmModal, setShowConfirmModal] = useState(false)
+
+	const handlePickSlotClick = () => {
+		if (!lotteryObjectId || isLoading || slotIndex === null || !lotteryData) return
+		setShowConfirmModal(true)
+	}
+
+	const handleConfirmPickSlot = async () => {
+		setShowConfirmModal(false)
+		handlePickSlot()
+	}
 
 	const handlePickSlot = async () => {
 		if (!lotteryObjectId || isLoading || slotIndex === null || !lotteryData)
@@ -231,7 +243,7 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 				)}
 
 				<button
-					onClick={handlePickSlot}
+					onClick={handlePickSlotClick}
 					disabled={
 						isLoading ||
 						!lotteryObjectId ||
@@ -265,6 +277,62 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 						? "Slot Taken"
 						: `Pick Slot ${slotIndex} (Pay ${mistToSui(lotteryData.fee)} SUI)`}
 				</button>
+
+				{/* Confirmation Modal */}
+				{showConfirmModal && lotteryData && slotIndex !== null && (
+					<div
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4"
+						onClick={() => setShowConfirmModal(false)}
+					>
+						<div
+							className="bg-card border border-primary/30 shadow-2xl max-w-md w-full p-6 space-y-4 rounded-sm"
+							onClick={(e) => e.stopPropagation()}
+						>
+							<div className="flex items-center gap-3">
+								<div className="p-2 bg-primary/20 rounded-sm">
+									<AlertTriangle className="w-6 h-6 text-primary" />
+								</div>
+								<h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Bangers, system-ui' }}>
+									Confirm Selection
+								</h3>
+							</div>
+
+							<div className="space-y-3 bg-black/30 p-4 rounded-sm border border-white/10">
+								<div className="flex justify-between">
+									<span className="text-muted-foreground">Slot Number</span>
+									<span className="text-white font-bold">{slotIndex}</span>
+								</div>
+								<div className="flex justify-between">
+									<span className="text-muted-foreground">Entry Fee</span>
+									<span className="text-primary font-bold">{mistToSui(lotteryData.fee)} SUI</span>
+								</div>
+								<div className="flex justify-between">
+									<span className="text-muted-foreground">Prize Pool</span>
+									<span className="text-secondary font-bold">{mistToSui(lotteryData.prize)} SUIYAN</span>
+								</div>
+							</div>
+
+							<p className="text-sm text-muted-foreground">
+								You are about to pick slot {slotIndex}. This action cannot be undone and will deduct {mistToSui(lotteryData.fee)} SUI from your wallet.
+							</p>
+
+							<div className="flex gap-3 pt-2">
+								<button
+									onClick={() => setShowConfirmModal(false)}
+									className="flex-1 px-4 py-3 bg-transparent border border-white/20 text-white font-bold uppercase tracking-wider hover:bg-white/5 transition-all"
+								>
+									Cancel
+								</button>
+								<button
+									onClick={handleConfirmPickSlot}
+									className="flex-1 px-4 py-3 bg-primary text-black font-bold uppercase tracking-wider hover:bg-yellow-400 transition-all"
+								>
+									Confirm
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
 
 				<div className="flex gap-3">
 					<button

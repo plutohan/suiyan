@@ -1,12 +1,52 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useNavigation } from "../../providers/navigation/NavigationContext"
 import { ConnectButton, useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit"
 import { SUIYAN_TOKEN_TYPE, mistToSui } from "../../config/constants"
+
+const SUI_COIN_TYPE = "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+const SUIYAN_COIN_TYPE = "0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac::suiyan::SUIYAN"
 
 const NavBar: React.FC = () => {
 	const { currentPage, navigate } = useNavigation()
 	const [showHowTo, setShowHowTo] = useState(false)
 	const currentAccount = useCurrentAccount()
+	const [suiyanPerSui, setSuiyanPerSui] = useState<number | null>(null)
+
+	// Fetch SUIYAN/SUI price ratio
+	useEffect(() => {
+		const fetchPrices = async () => {
+			try {
+				const [suiRes, suiyanRes] = await Promise.all([
+					fetch("https://aftermath.finance/api/price-info", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ coins: [SUI_COIN_TYPE] }),
+					}),
+					fetch("https://aftermath.finance/api/price-info", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ coins: [SUIYAN_COIN_TYPE] }),
+					}),
+				])
+
+				const suiData = await suiRes.json()
+				const suiyanData = await suiyanRes.json()
+
+				const suiPrice = suiData[SUI_COIN_TYPE]?.price
+				const suiyanPrice = suiyanData[SUIYAN_COIN_TYPE]?.price
+
+				if (suiPrice && suiyanPrice) {
+					setSuiyanPerSui(suiPrice / suiyanPrice)
+				}
+			} catch (error) {
+				console.error("Failed to fetch prices:", error)
+			}
+		}
+
+		fetchPrices()
+		const interval = setInterval(fetchPrices, 60000) // Refresh every minute
+		return () => clearInterval(interval)
+	}, [])
 
 	// Fetch SUI balance
 	const { data: suiBalance } = useSuiClientQuery(
@@ -72,6 +112,21 @@ const NavBar: React.FC = () => {
 				</div>
 
 				<div className="flex items-center gap-4">
+					{/* Price Display */}
+					{suiyanPerSui !== null && (
+						<div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-card/50 border border-primary/20 rounded text-xs">
+							<span className="text-muted-foreground">1 SUI =</span>
+							<span className="font-mono text-primary font-bold">
+								{suiyanPerSui >= 1000000
+									? `${(suiyanPerSui / 1000000).toFixed(2)}M`
+									: suiyanPerSui >= 1000
+									? `${(suiyanPerSui / 1000).toFixed(1)}K`
+									: suiyanPerSui.toFixed(0)}
+							</span>
+							<span className="text-muted-foreground">SUIYAN</span>
+						</div>
+					)}
+
 					{/* Balance Display */}
 					{currentAccount && (
 						<div className="hidden md:flex items-center gap-3 px-4 py-2 bg-card/50 border border-primary/20 rounded">
