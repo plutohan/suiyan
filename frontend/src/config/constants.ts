@@ -21,8 +21,8 @@ export const RANDOM_OBJECT_ID = "0x8"
 export const SLOT_COUNT = 9
 
 // Default values for prize and fee
-export const DEFAULT_LOTTERY_PRIZE = 100_000_000 // 0.1 SUIYAN tokens (9 decimals)
-export const DEFAULT_FEE = 15_000_000 // 0.015 SUI in MIST (for entry fee)
+export const DEFAULT_LOTTERY_PRIZE = 100_000_000_000_000 // 100,000 SUIYAN tokens (9 decimals)
+export const DEFAULT_FEE = 15_000_000 // 0.015 SUI in MIST (for entry fee) - this is a fallback
 
 // Helper function to convert MIST to SUI/SUIYAN (both use 9 decimals)
 export const mistToSui = (mist: number): string => {

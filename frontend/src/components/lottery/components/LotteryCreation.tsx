@@ -16,8 +16,10 @@ import {
 	SUIYAN_TOKEN_TYPE,
 } from "../../../config/constants"
 
-const SUI_COIN_TYPE = "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
-const SUIYAN_COIN_TYPE = "0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac::suiyan::SUIYAN"
+const SUI_COIN_TYPE =
+	"0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+const SUIYAN_COIN_TYPE =
+	"0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac::suiyan::SUIYAN"
 
 interface LotteryCreationProps {
 	isLoading: boolean
@@ -68,7 +70,11 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 				const suiyanPrice = suiyanData[SUIYAN_COIN_TYPE]?.price
 
 				if (suiPrice && suiyanPrice) {
-					setSuiyanPerSui(suiPrice / suiyanPrice)
+					const ratio = suiPrice / suiyanPrice
+					setSuiyanPerSui(ratio)
+					// Calculate default fee: (100,000 SUIYAN / ratio) * 0.15
+					const defaultFeeValue = (100000 / ratio) * 0.15
+					setFeeInSui(defaultFeeValue.toFixed(4))
 				}
 			} catch (error) {
 				console.error("Failed to fetch prices:", error)
@@ -208,30 +214,45 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					Create New Lottery
 				</h3>
 				<p className="text-sm text-muted-foreground">
-					Create a 3x3 lottery with 9 slots. Configure the prize pool and entry
-					fee below.
+					Create a 3x3 lottery with 9 slots. Configure the prize pool
+					and entry fee below.
 				</p>
 			</div>
 
 			{/* Balance & Price Info */}
 			<div className="bg-black/40 border border-white/10 p-4 rounded-sm space-y-2">
 				<div className="flex justify-between items-center">
-					<span className="text-sm text-muted-foreground">Your SUIYAN Balance:</span>
+					<span className="text-sm text-muted-foreground">
+						Your SUIYAN Balance:
+					</span>
 					<span className="text-primary font-bold font-mono">
 						{suiyanCoins
-							? mistToSui(Number(suiyanCoins.data.reduce((sum, coin) => sum + BigInt(coin.balance), BigInt(0))))
-							: "0"} SUIYAN
+							? mistToSui(
+									Number(
+										suiyanCoins.data.reduce(
+											(sum, coin) =>
+												sum + BigInt(coin.balance),
+											BigInt(0)
+										)
+									)
+							  )
+							: "0"}{" "}
+						SUIYAN
 					</span>
 				</div>
 				{suiyanPerSui !== null && (
 					<div className="flex justify-between items-center">
-						<span className="text-sm text-muted-foreground">Current Rate:</span>
+						<span className="text-sm text-muted-foreground">
+							Current Rate:
+						</span>
 						<span className="text-secondary font-bold font-mono">
-							1 SUI = {suiyanPerSui >= 1000000
+							1 SUI ={" "}
+							{suiyanPerSui >= 1000000
 								? `${(suiyanPerSui / 1000000).toFixed(2)}M`
 								: suiyanPerSui >= 1000
 								? `${(suiyanPerSui / 1000).toFixed(1)}K`
-								: suiyanPerSui.toFixed(0)} SUIYAN
+								: suiyanPerSui.toFixed(0)}{" "}
+							SUIYAN
 						</span>
 					</div>
 				)}
@@ -240,7 +261,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 			{/* Prize Amount Input */}
 			<div>
 				<label className="block text-sm font-bold text-white mb-2 uppercase tracking-wider">
-					Prize Pool (SUIYAN Tokens)
+					Prize ($SUIYAN)
 				</label>
 				<input
 					type="number"
@@ -259,7 +280,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 			{/* Fee Input */}
 			<div>
 				<label className="block text-sm font-bold text-white mb-2 uppercase tracking-wider">
-					Entry Fee per Slot (SUI)
+					Entry Fee per Slot ($SUI)
 				</label>
 				<input
 					type="number"
