@@ -44,7 +44,7 @@ export function HeroBanner() {
 						</h1>
 
 						<p className="text-base md:text-lg text-gray-400 max-w-lg font-light tracking-wide border-l-2 border-primary/30 pl-4">
-							A simple 3x3 lottery game. Each lottery has 9 slots - pick one, and if you're lucky, win the entire prize pool in SUIYAN tokens!
+							Pay a small SUI fee, win BIG SUIYAN! Anyone can create their own lottery with SUIYAN tokens and collect entry fees from players.
 						</p>
 
 						{/* How It Works */}
