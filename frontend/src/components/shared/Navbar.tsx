@@ -86,7 +86,7 @@ const NavBar: React.FC = () => {
 								className="w-full h-full object-contain relative z-10 drop-shadow-[0_0_10px_rgba(255,215,0,0.5)]"
 							/>
 						</div>
-						<span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto]" style={{ fontFamily: 'Bangers, system-ui', letterSpacing: '0.05em' }}>
+						<span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] pr-1" style={{ fontFamily: 'Bangers, system-ui', letterSpacing: '0.05em' }}>
 							SUIYAN PLAY
 						</span>
 					</div>
