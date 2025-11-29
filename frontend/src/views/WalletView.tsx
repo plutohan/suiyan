@@ -11,6 +11,8 @@ const WalletView: FC = () => {
 	const [createdGames, setCreatedGames] = useState<LotterySummary[]>([])
 	const [wonGames, setWonGames] = useState<LotterySummary[]>([])
 	const [isLoading, setIsLoading] = useState(true)
+	const [showUnclaimedFeeOnly, setShowUnclaimedFeeOnly] = useState(false)
+	const [showUnclaimedPrizeOnly, setShowUnclaimedPrizeOnly] = useState(false)
 
 	useEffect(() => {
 		const loadGames = async () => {
@@ -38,6 +40,14 @@ const WalletView: FC = () => {
 
 		loadGames()
 	}, [account?.address, client])
+
+	const filteredCreatedGames = showUnclaimedFeeOnly
+		? createdGames.filter(game => game.remainingFeeMist > 0)
+		: createdGames
+
+	const filteredWonGames = showUnclaimedPrizeOnly
+		? wonGames.filter(game => game.prizeMist > 0 && !game.prizeClaimed)
+		: wonGames
 
 	if (!account?.address) {
 		return (
@@ -76,24 +86,38 @@ const WalletView: FC = () => {
 				<div className="space-y-8">
 					{/* Games I Created */}
 					<div>
-						<div className="flex items-center gap-2 mb-4">
-							<Plus className="w-5 h-5 text-primary" />
-							<h2 className="text-xl font-bold text-white uppercase tracking-wider">
-								Games I Created
-							</h2>
-							<span className="text-muted-foreground text-sm">
-								({createdGames.length})
-							</span>
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-2">
+								<Plus className="w-5 h-5 text-primary" />
+								<h2 className="text-xl font-bold text-white uppercase tracking-wider">
+									Games I Created
+								</h2>
+								<span className="text-muted-foreground text-sm">
+									({filteredCreatedGames.length})
+								</span>
+							</div>
+							<button
+								onClick={() => setShowUnclaimedFeeOnly(!showUnclaimedFeeOnly)}
+								className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
+									showUnclaimedFeeOnly
+										? "bg-primary text-black"
+										: "bg-card border border-white/20 text-muted-foreground hover:text-white"
+								}`}
+							>
+								Unclaimed Fee
+							</button>
 						</div>
-						{createdGames.length === 0 ? (
+						{filteredCreatedGames.length === 0 ? (
 							<div className="bg-card border border-white/10 p-6 rounded-sm text-center">
 								<p className="text-muted-foreground">
-									You haven't created any games yet.
+									{showUnclaimedFeeOnly
+										? "No games with unclaimed fees."
+										: "You haven't created any games yet."}
 								</p>
 							</div>
 						) : (
 							<div className="space-y-3">
-								{createdGames.map((game) => (
+								{filteredCreatedGames.map((game) => (
 									<GameRow key={game.id} game={game} onClick={() => navigate(`/lottery/${game.id}`)} />
 								))}
 							</div>
@@ -102,24 +126,38 @@ const WalletView: FC = () => {
 
 					{/* Games I Won */}
 					<div>
-						<div className="flex items-center gap-2 mb-4">
-							<Trophy className="w-5 h-5 text-primary" />
-							<h2 className="text-xl font-bold text-white uppercase tracking-wider">
-								Games I Won
-							</h2>
-							<span className="text-muted-foreground text-sm">
-								({wonGames.length})
-							</span>
+						<div className="flex items-center justify-between mb-4">
+							<div className="flex items-center gap-2">
+								<Trophy className="w-5 h-5 text-primary" />
+								<h2 className="text-xl font-bold text-white uppercase tracking-wider">
+									Games I Won
+								</h2>
+								<span className="text-muted-foreground text-sm">
+									({filteredWonGames.length})
+								</span>
+							</div>
+							<button
+								onClick={() => setShowUnclaimedPrizeOnly(!showUnclaimedPrizeOnly)}
+								className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
+									showUnclaimedPrizeOnly
+										? "bg-primary text-black"
+										: "bg-card border border-white/20 text-muted-foreground hover:text-white"
+								}`}
+							>
+								Unclaimed Prize
+							</button>
 						</div>
-						{wonGames.length === 0 ? (
+						{filteredWonGames.length === 0 ? (
 							<div className="bg-card border border-white/10 p-6 rounded-sm text-center">
 								<p className="text-muted-foreground">
-									You haven't won any games yet. Keep playing!
+									{showUnclaimedPrizeOnly
+										? "No games with unclaimed prizes."
+										: "You haven't won any games yet. Keep playing!"}
 								</p>
 							</div>
 						) : (
 							<div className="space-y-3">
-								{wonGames.map((game) => (
+								{filteredWonGames.map((game) => (
 									<GameRow key={game.id} game={game} onClick={() => navigate(`/lottery/${game.id}`)} />
 								))}
 							</div>
