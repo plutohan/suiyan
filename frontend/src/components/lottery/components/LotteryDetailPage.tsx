@@ -321,14 +321,12 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 					{/* Right Column: Intel & Actions */}
 					<div className="lg:col-span-5 space-y-6">
 						{/* Prize Card */}
-						<div className="relative bg-gradient-to-b from-purple-900/20 to-black border border-primary/20 p-6 rounded-sm overflow-hidden">
-							<div className="absolute top-0 right-0 p-4 opacity-20">
-								<img
-									src="/apple-touch-icon.png"
-									className="w-64 h-64 object-contain [mask-image:linear-gradient(to_bottom,black,transparent)]"
-									alt=""
-								/>
-							</div>
+						<div className="relative border border-primary/20 p-6 rounded-sm overflow-hidden">
+							<div
+								className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+								style={{ backgroundImage: "url('https://supersuiyan.xyz/images/footer-cta-min.jpg')" }}
+							/>
+							<div className="absolute inset-0 bg-black/60" />
 
 							<div className="relative z-10">
 								<div className="inline-block px-2 py-1 bg-primary text-black font-bold text-xs uppercase skew-x-[-10deg] mb-4">
