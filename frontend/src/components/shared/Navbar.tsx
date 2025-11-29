@@ -1,52 +1,13 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { useNavigation } from "../../providers/navigation/NavigationContext"
 import { ConnectButton, useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit"
 import { SUIYAN_TOKEN_TYPE, mistToSui } from "../../config/constants"
 
-const SUI_COIN_TYPE = "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
-const SUIYAN_COIN_TYPE = "0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac::suiyan::SUIYAN"
-
 const NavBar: React.FC = () => {
 	const { currentPage, navigate } = useNavigation()
 	const [showHowTo, setShowHowTo] = useState(false)
+	const [showMobileMenu, setShowMobileMenu] = useState(false)
 	const currentAccount = useCurrentAccount()
-	const [suiyanPerSui, setSuiyanPerSui] = useState<number | null>(null)
-
-	// Fetch SUIYAN/SUI price ratio
-	useEffect(() => {
-		const fetchPrices = async () => {
-			try {
-				const [suiRes, suiyanRes] = await Promise.all([
-					fetch("https://aftermath.finance/api/price-info", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ coins: [SUI_COIN_TYPE] }),
-					}),
-					fetch("https://aftermath.finance/api/price-info", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ coins: [SUIYAN_COIN_TYPE] }),
-					}),
-				])
-
-				const suiData = await suiRes.json()
-				const suiyanData = await suiyanRes.json()
-
-				const suiPrice = suiData[SUI_COIN_TYPE]?.price
-				const suiyanPrice = suiyanData[SUIYAN_COIN_TYPE]?.price
-
-				if (suiPrice && suiyanPrice) {
-					setSuiyanPerSui(suiPrice / suiyanPrice)
-				}
-			} catch (error) {
-				console.error("Failed to fetch prices:", error)
-			}
-		}
-
-		fetchPrices()
-		const interval = setInterval(fetchPrices, 60000) // Refresh every minute
-		return () => clearInterval(interval)
-	}, [])
 
 	// Fetch SUI balance
 	const { data: suiBalance } = useSuiClientQuery(
@@ -107,21 +68,6 @@ const NavBar: React.FC = () => {
 				</div>
 
 				<div className="flex items-center gap-4">
-					{/* Price Display */}
-					{suiyanPerSui !== null && (
-						<div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-card/50 border border-primary/20 rounded text-xs">
-							<span className="text-muted-foreground">1 SUI =</span>
-							<span className="font-mono text-primary font-bold">
-								{suiyanPerSui >= 1000000
-									? `${(suiyanPerSui / 1000000).toFixed(2)}M`
-									: suiyanPerSui >= 1000
-									? `${(suiyanPerSui / 1000).toFixed(1)}K`
-									: suiyanPerSui.toFixed(0)}
-							</span>
-							<span className="text-muted-foreground">SUIYAN</span>
-						</div>
-					)}
-
 					{/* Balance Display */}
 					{currentAccount && (
 						<div className="hidden md:flex items-center gap-3 px-4 py-2 bg-card/50 border border-primary/20 rounded">
@@ -152,8 +98,87 @@ const NavBar: React.FC = () => {
 					<div className="hidden md:block">
 						<ConnectButton />
 					</div>
+
+					{/* Mobile Menu Button */}
+					<button
+						onClick={() => setShowMobileMenu(!showMobileMenu)}
+						className="md:hidden p-2 text-muted-foreground hover:text-white transition-colors"
+						aria-label="Toggle menu"
+					>
+						{showMobileMenu ? (
+							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						) : (
+							<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+							</svg>
+						)}
+					</button>
 				</div>
 			</div>
+
+			{/* Mobile Menu */}
+			{showMobileMenu && (
+				<div className="md:hidden border-t border-primary/20 bg-background/95 backdrop-blur-xl">
+					<div className="container mx-auto px-4 py-4 space-y-4">
+						{/* Mobile Nav Links */}
+						<nav className="flex flex-col gap-2">
+							<button
+								onClick={() => { navigate("/lottery"); setShowMobileMenu(false); }}
+								className={`text-left px-4 py-3 font-bold uppercase tracking-wide transition-all ${
+									currentPage === "/lottery" || currentPage.startsWith("/lottery/")
+										? "text-primary bg-primary/10 border-l-2 border-primary"
+										: "text-muted-foreground hover:text-white hover:bg-white/5"
+								}`}
+							>
+								Lottery
+							</button>
+							<button
+								onClick={() => { navigate("/wallet"); setShowMobileMenu(false); }}
+								className={`text-left px-4 py-3 font-bold uppercase tracking-wide transition-all ${
+									currentPage === "/wallet"
+										? "text-primary bg-primary/10 border-l-2 border-primary"
+										: "text-muted-foreground hover:text-white hover:bg-white/5"
+								}`}
+							>
+								Wallet
+							</button>
+							<button
+								onClick={() => { setShowHowTo(true); setShowMobileMenu(false); }}
+								className="text-left px-4 py-3 font-bold uppercase tracking-wide text-muted-foreground hover:text-secondary hover:bg-secondary/10 transition-all"
+							>
+								How To Play
+							</button>
+						</nav>
+
+						{/* Mobile Balance Display */}
+						{currentAccount && (
+							<div className="flex items-center gap-3 px-4 py-3 bg-card/50 border border-primary/20 rounded">
+								<div className="flex flex-col text-sm">
+									<div className="flex items-center gap-2">
+										<span className="font-bold text-primary uppercase tracking-wider">SUIYAN:</span>
+										<span className="font-mono text-foreground font-semibold">
+											{suiyanBalance ? mistToSui(parseInt(suiyanBalance.totalBalance)) : "0"}
+										</span>
+									</div>
+									<div className="flex items-center gap-2">
+										<span className="font-bold text-secondary uppercase tracking-wider">SUI:</span>
+										<span className="font-mono text-foreground font-semibold">
+											{suiBalance ? mistToSui(parseInt(suiBalance.totalBalance)) : "0"}
+										</span>
+									</div>
+								</div>
+							</div>
+						)}
+
+						{/* Mobile Connect Button */}
+						<div className="px-4">
+							<ConnectButton />
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Decorative Bottom Line */}
 			<div className="h-[1px] w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
@@ -187,6 +212,7 @@ const NavBar: React.FC = () => {
 							</button>
 						</div>
 
+						<h4 className="text-lg font-bold text-secondary uppercase tracking-wider">For Players</h4>
 						<ol className="list-decimal list-inside space-y-4 text-base text-gray-300">
 							<li className="pl-2">
 								<strong className="text-primary uppercase">Connect Wallet:</strong> Use
@@ -203,8 +229,23 @@ const NavBar: React.FC = () => {
 							</li>
 							<li className="pl-2">
 								<strong className="text-primary uppercase">Win & Claim:</strong> If you
-								win, collect your prize in SUIYAN tokens! Creators can also collect
-								their entry fees in SUI.
+								win, collect your prize in SUIYAN tokens!
+							</li>
+						</ol>
+
+						<h4 className="text-lg font-bold text-secondary uppercase tracking-wider pt-4 border-t border-white/10">For Creators</h4>
+						<ol className="list-decimal list-inside space-y-4 text-base text-gray-300">
+							<li className="pl-2">
+								<strong className="text-primary uppercase">Create Lottery:</strong> Set
+								your SUIYAN prize pool and choose a return multiplier.
+							</li>
+							<li className="pl-2">
+								<strong className="text-primary uppercase">Set Multiplier:</strong> Lower
+								multiplier = higher entry fee = more profit. Below 9x means you profit!
+							</li>
+							<li className="pl-2">
+								<strong className="text-primary uppercase">Collect Fees:</strong> Once
+								all 9 slots are filled, collect your SUI entry fees from the lottery.
 							</li>
 						</ol>
 

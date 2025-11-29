@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react"
+import { FC, useState } from "react"
 import {
 	useSignAndExecuteTransaction,
 	useCurrentAccount,
@@ -10,16 +10,11 @@ import { Transaction } from "@mysten/sui/transactions"
 import {
 	PACKAGE_ID,
 	DEFAULT_LOTTERY_PRIZE,
-	DEFAULT_FEE,
 	mistToSui,
 	suiToMist,
 	SUIYAN_TOKEN_TYPE,
 } from "../../../config/constants"
-
-const SUI_COIN_TYPE =
-	"0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
-const SUIYAN_COIN_TYPE =
-	"0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac::suiyan::SUIYAN"
+import { usePrice } from "../../../providers/price/PriceContext"
 
 interface LotteryCreationProps {
 	isLoading: boolean
@@ -36,53 +31,22 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 }) => {
 	const { mutate: signAndExecute } = useSignAndExecuteTransaction()
 	const currentAccount = useCurrentAccount()
+	const { suiyanPerSui } = usePrice()
 
-	// State for prize and fee inputs
+	// State for prize and probability inputs
 	const [prizeInTokens, setPrizeInTokens] = useState<string>(
 		mistToSui(DEFAULT_LOTTERY_PRIZE)
 	)
-	const [feeInSui, setFeeInSui] = useState<string>(mistToSui(DEFAULT_FEE))
+	const [multiplier, setMultiplier] = useState<string>("8")
 	const [localStatus, setLocalStatus] = useState<string>("")
 	const [showConnectWallet, setShowConnectWallet] = useState(false)
-	const [suiyanPerSui, setSuiyanPerSui] = useState<number | null>(null)
 
-	// Fetch SUIYAN/SUI price ratio
-	useEffect(() => {
-		const fetchPrices = async () => {
-			try {
-				const [suiRes, suiyanRes] = await Promise.all([
-					fetch("https://aftermath.finance/api/price-info", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ coins: [SUI_COIN_TYPE] }),
-					}),
-					fetch("https://aftermath.finance/api/price-info", {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ coins: [SUIYAN_COIN_TYPE] }),
-					}),
-				])
-
-				const suiData = await suiRes.json()
-				const suiyanData = await suiyanRes.json()
-
-				const suiPrice = suiData[SUI_COIN_TYPE]?.price
-				const suiyanPrice = suiyanData[SUIYAN_COIN_TYPE]?.price
-
-				if (suiPrice && suiyanPrice) {
-					const ratio = suiPrice / suiyanPrice
-					setSuiyanPerSui(ratio)
-					// Calculate default fee: (100,000 SUIYAN / ratio) * 0.15
-					const defaultFeeValue = (100000 / ratio) * 0.15
-					setFeeInSui(defaultFeeValue.toFixed(4))
-				}
-			} catch (error) {
-				console.error("Failed to fetch prices:", error)
-			}
-		}
-
-		fetchPrices()
-	}, [])
+	// Calculate fee based on prize and multiplier
+	// Fee = Prize value in SUI / Multiplier
+	const prizeValueInSui = suiyanPerSui
+		? (parseFloat(prizeInTokens) || 0) / suiyanPerSui
+		: 0
+	const calculatedFee = prizeValueInSui / (parseFloat(multiplier) || 1)
 
 	// Query SUIYAN coins
 	const { data: suiyanCoins } = useSuiClientQuery(
@@ -96,6 +60,12 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 		}
 	)
 
+	// Calculate total SUIYAN balance
+	const totalSuiyanBalance = suiyanCoins
+		? Number(suiyanCoins.data.reduce((sum, coin) => sum + BigInt(coin.balance), BigInt(0))) / 1_000_000_000
+		: 0
+	const hasInsufficientBalance = (parseFloat(prizeInTokens) || 0) > totalSuiyanBalance
+
 	const handleCreateLottery = async () => {
 		if (isLoading) return
 
@@ -107,7 +77,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 
 		// Convert to base units (9 decimals for both SUIYAN tokens and SUI)
 		const prizeAmount = suiToMist(parseFloat(prizeInTokens) || 0)
-		const feeInMist = suiToMist(parseFloat(feeInSui) || 0)
+		const feeInMist = suiToMist(calculatedFee)
 
 		// Validate inputs
 		if (prizeAmount <= 0) {
@@ -272,36 +242,70 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					placeholder="Enter prize amount"
 					className="w-full px-4 py-3 border border-white/10 bg-black/40 text-white rounded-sm focus:outline-none focus:border-primary/50 font-mono"
 				/>
-				<p className="text-xs text-muted-foreground mt-2">
-					Winner receives this amount in SUIYAN tokens
+				<p className="text-xs text-muted-foreground mt-2 flex justify-between">
+					<span>Winner receives this amount in SUIYAN tokens</span>
+					<span className="text-secondary font-mono">
+						≈ {suiyanPerSui !== null ? prizeValueInSui.toFixed(4) : "..."} SUI
+					</span>
 				</p>
 			</div>
 
-			{/* Fee Input */}
+			{/* Return Multiplier Input */}
 			<div>
 				<label className="block text-sm font-bold text-white mb-2 uppercase tracking-wider">
-					Entry Fee per Slot ($SUI)
+					Return Multiplier
 				</label>
-				<input
-					type="number"
-					value={feeInSui}
-					onChange={(e) => setFeeInSui(e.target.value)}
-					step="0.001"
-					min="0"
-					placeholder="Enter fee amount"
-					className="w-full px-4 py-3 border border-white/10 bg-black/40 text-white rounded-sm focus:outline-none focus:border-primary/50 font-mono"
-				/>
+				<div className="relative">
+					<input
+						type="number"
+						value={multiplier}
+						onChange={(e) => setMultiplier(e.target.value)}
+						step="1"
+						min="2"
+						max="100"
+						placeholder="e.g., 7"
+						className="w-full px-4 py-3 pr-10 border border-white/10 bg-black/40 text-white rounded-sm focus:outline-none focus:border-primary/50 font-mono"
+					/>
+					<span className="absolute right-4 top-1/2 -translate-y-1/2 text-primary font-bold">
+						×
+					</span>
+				</div>
 				<p className="text-xs text-muted-foreground mt-2">
-					Players pay this amount to pick a slot
+					The lower below 9×, the more the creator profits.
 				</p>
+				{parseFloat(multiplier) >= 9 && (
+					<p className="text-xs text-yellow-400 mt-1">
+						Warning: At 9× or higher, creator may not profit.
+					</p>
+				)}
+			</div>
+
+			{/* Calculated Fee Display */}
+			<div className="bg-black/40 border border-white/10 p-4 rounded-sm space-y-2">
+				<div className="flex justify-between items-center">
+					<span className="text-sm text-muted-foreground">
+						Entry Fee per Slot:
+					</span>
+					<span className="text-secondary font-bold font-mono">
+						{suiyanPerSui !== null ? calculatedFee.toFixed(4) : "..."} SUI
+					</span>
+				</div>
+				<div className="flex justify-between items-center">
+					<span className="text-sm text-muted-foreground">
+						Prize Value:
+					</span>
+					<span className="text-primary font-bold font-mono">
+						~{suiyanPerSui !== null ? prizeValueInSui.toFixed(2) : "..."} SUI
+					</span>
+				</div>
 			</div>
 
 			<button
 				onClick={handleCreateLottery}
-				disabled={isLoading}
+				disabled={isLoading || hasInsufficientBalance}
 				className="w-full h-14 bg-gradient-to-r from-primary to-orange-500 text-black font-bold text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(255,215,0,0.3)] border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
 			>
-				{isLoading ? "Processing..." : "CREATE LOTTERY"}
+				{isLoading ? "Processing..." : hasInsufficientBalance ? "INSUFFICIENT BALANCE" : "CREATE LOTTERY"}
 			</button>
 			{localStatus && (
 				<p className="mt-3 text-xs text-muted-foreground font-mono">

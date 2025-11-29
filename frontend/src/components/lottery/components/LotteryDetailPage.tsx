@@ -14,6 +14,7 @@ import {
 } from "../../../config/constants"
 import { Transaction } from "@mysten/sui/transactions"
 import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet } from "lucide-react"
+import { usePrice } from "../../../providers/price/PriceContext"
 
 type Props = {
 	gameId: string
@@ -30,6 +31,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 	const [showConfirm, setShowConfirm] = useState(false)
 	const [showConnectWallet, setShowConnectWallet] = useState(false)
 	const [statusMessage, setStatusMessage] = useState<string>("")
+	const { suiyanPerSui } = usePrice()
 
 	useEffect(() => {
 		setSelectedSlot(null)
@@ -411,9 +413,16 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 									<span className="text-muted-foreground">
 										Entry Fee:
 									</span>
-									<span className="text-primary font-bold font-mono">
-										{lottery.fee} SUI
-									</span>
+									<div className="text-right">
+										<span className="text-primary font-bold font-mono">
+											{lottery.fee} SUI
+										</span>
+										{suiyanPerSui && (
+											<p className="text-xs text-muted-foreground font-mono">
+												≈ {Math.round(parseFloat(lottery.fee) * suiyanPerSui).toLocaleString()} SUIYAN
+											</p>
+										)}
+									</div>
 								</div>
 
 								<button
@@ -519,9 +528,16 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 								<span className="text-muted-foreground text-sm uppercase">
 									Entry Fee:
 								</span>
-								<span className="text-primary font-bold font-mono text-xl">
-									{mistToSui(lottery.feeMist)} SUI
-								</span>
+								<div className="text-right">
+									<span className="text-primary font-bold font-mono text-xl">
+										{mistToSui(lottery.feeMist)} SUI
+									</span>
+									{suiyanPerSui && (
+										<p className="text-xs text-muted-foreground font-mono">
+											≈ {Math.round(parseFloat(mistToSui(lottery.feeMist)) * suiyanPerSui).toLocaleString()} SUIYAN
+										</p>
+									)}
+								</div>
 							</div>
 						</div>
 						<div className="flex gap-3">

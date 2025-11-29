@@ -8,7 +8,7 @@ import { LotteryCreation } from "./LotteryCreation"
 import { Plus, Gamepad2 } from "lucide-react"
 
 const PAGE_SIZE = 12
-type FilterMode = "latest" | "active" | "prize"
+type FilterMode = "all" | "active" | "ending-soon"
 
 const LotteryGridList: FC = () => {
 	const { navigate } = useNavigation()
@@ -17,7 +17,7 @@ const LotteryGridList: FC = () => {
 	const [page, setPage] = useState(1)
 	const [total, setTotal] = useState(0)
 	const [isLoading, setIsLoading] = useState(false)
-	const [filterMode, setFilterMode] = useState<FilterMode>("latest")
+	const [filterMode, setFilterMode] = useState<FilterMode>("active")
 	const [showCreateModal, setShowCreateModal] = useState(false)
 
 	const loadPage = useCallback(
@@ -44,15 +44,21 @@ const LotteryGridList: FC = () => {
 	}
 
 	const displayedGames = useMemo(() => {
+		if (filterMode === "ending-soon") {
+			// Sort by most filled first (closest to finishing), only show active
+			return games
+				.filter((game) => game.isActive)
+				.sort((a, b) => {
+					const filledA = a.slots.filter(Boolean).length
+					const filledB = b.slots.filter(Boolean).length
+					// Sort by most filled first (descending)
+					if (filledA !== filledB) return filledB - filledA
+					return (b.createdAtMs || 0) - (a.createdAtMs || 0)
+				})
+		}
+
+		// Sort: active first, then by newest
 		const sorted = games.slice().sort((a, b) => {
-			if (filterMode === "prize") {
-				return (b.prizeValue || 0) - (a.prizeValue || 0)
-			}
-			if (filterMode === "active") {
-				if (a.isActive !== b.isActive) return a.isActive ? -1 : 1
-				return (b.createdAtMs || 0) - (a.createdAtMs || 0)
-			}
-			// default: active first, newest first
 			if (a.isActive !== b.isActive) return a.isActive ? -1 : 1
 			return (b.createdAtMs || 0) - (a.createdAtMs || 0)
 		})
@@ -102,9 +108,9 @@ const LotteryGridList: FC = () => {
 						</span>
 						<div className="flex gap-2">
 							<button
-								onClick={() => setFilterMode("latest")}
+								onClick={() => setFilterMode("all")}
 								className={`h-8 px-3 border text-xs font-mono uppercase tracking-wider ${
-									filterMode === "latest"
+									filterMode === "all"
 										? "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
 										: "border-white/10 bg-transparent hover:bg-white/5 text-muted-foreground"
 								}`}
@@ -122,14 +128,14 @@ const LotteryGridList: FC = () => {
 								ACTIVE
 							</button>
 							<button
-								onClick={() => setFilterMode("prize")}
+								onClick={() => setFilterMode("ending-soon")}
 								className={`h-8 px-3 border text-xs font-mono uppercase tracking-wider ${
-									filterMode === "prize"
+									filterMode === "ending-soon"
 										? "border-primary/30 bg-primary/5 text-primary hover:bg-primary/10"
 										: "border-white/10 bg-transparent hover:bg-white/5 text-muted-foreground"
 								}`}
 							>
-								HIGH STAKES
+								ENDING SOON
 							</button>
 						</div>
 					</div>

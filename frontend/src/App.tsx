@@ -3,6 +3,7 @@ import { useTheme } from "./providers/theme/ThemeContext";
 import NavBar from "./components/shared/Navbar";
 import { NavigationProvider } from "./providers/navigation/NavigationProvider";
 import { useNavigation } from "./providers/navigation/NavigationContext";
+import { PriceProvider } from "./providers/price/PriceProvider";
 import WalletView from "./views/WalletView";
 import HomeView from "./views/HomeView";
 import LotteryGridList from "./components/lottery/components/LotteryGridList";
@@ -44,14 +45,16 @@ const App: React.FC = () => {
   }, [darkMode]);
 
   return (
-    <NavigationProvider>
-      <div className="min-h-screen gradient-bg">
-        <NavBar />
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <Pages />
+    <PriceProvider>
+      <NavigationProvider>
+        <div className="min-h-screen gradient-bg">
+          <NavBar />
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <Pages />
+          </div>
         </div>
-      </div>
-    </NavigationProvider>
+      </NavigationProvider>
+    </PriceProvider>
   );
 };
 
