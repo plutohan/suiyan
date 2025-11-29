@@ -13,7 +13,6 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 
 	const slots = game.slots.length ? game.slots : Array(9).fill(false)
 	const participants = slots.filter((slot) => slot).length
-	const availableSlots = slots.filter((slot) => !slot).length
 
 	const getSlotStyle = (isTaken: boolean, index: number) => {
 		const isWinning = !isActive && index === game.winningSlot

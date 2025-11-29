@@ -19,7 +19,6 @@ export const LotteryGrid: FC<LotteryGridProps> = ({
 	const getSlotStyle = (isTaken: boolean, index: number) => {
 		const isWinning = !isActive && index === winningSlot
 		const isSelected = selectedSlot === index
-		const isAvailable = isActive && !isTaken
 
 		if (isWinning) {
 			return "bg-primary border-primary shadow-[0_0_20px_rgba(255,215,0,0.6)] z-10 ring-2 ring-yellow-200 animate-pulse"

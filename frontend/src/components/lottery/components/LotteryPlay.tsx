@@ -38,7 +38,7 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 	isLoading,
 	onLoadingChange,
 	onStatusChange,
-	onLotteryUpdate,
+	onLotteryUpdate: _onLotteryUpdate,
 }) => {
 	const { mutate: signAndExecute } = useSignAndExecuteTransaction()
 
