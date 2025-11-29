@@ -55,8 +55,13 @@ const NavBar: React.FC = () => {
 					<nav className="hidden md:flex items-center gap-1 ml-8">
 						<NavButton
 							label="Home"
-							active={currentPage === "/" || currentPage.startsWith("/lottery/")}
+							active={currentPage === "/"}
 							onClick={() => navigate("/")}
+						/>
+						<NavButton
+							label="Lottery"
+							active={currentPage === "/lottery" || currentPage.startsWith("/lottery/")}
+							onClick={() => navigate("/lottery")}
 						/>
 						<NavButton
 							label="Wallet"

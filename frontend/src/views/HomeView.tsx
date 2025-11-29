@@ -1,11 +1,10 @@
 import { FC } from "react"
-import LotteryGridList from "../components/lottery/components/LotteryGridList"
+import { HeroBanner } from "../components/shared/HeroBanner"
 
 const HomeView: FC = () => {
 	return (
 		<div className="space-y-10">
-			<LotteryGridList />
-			{/* <LotteryInteraction /> */}
+			<HeroBanner />
 		</div>
 	)
 }

@@ -5,7 +5,6 @@ import Pagination from "./Pagination"
 import { LotterySummary, fetchAllLotteries } from "../lotteryApi"
 import { useSuiClient } from "@mysten/dapp-kit"
 import { LotteryCreation } from "./LotteryCreation"
-import { HeroBanner } from "../../shared/HeroBanner"
 import { Plus, Gamepad2 } from "lucide-react"
 
 const PAGE_SIZE = 12
@@ -66,9 +65,6 @@ const LotteryGridList: FC = () => {
 
 	return (
 		<div className="container mx-auto px-4 py-8">
-			{/* Hero Banner */}
-			<HeroBanner />
-
 			{/* Control Panel Bar */}
 			<div className="flex flex-col gap-6 mb-8 border-b border-white/10 pb-8">
 				<div className="flex flex-col md:flex-row justify-between items-end gap-4">

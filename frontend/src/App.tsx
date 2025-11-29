@@ -5,6 +5,7 @@ import { NavigationProvider } from "./providers/navigation/NavigationProvider";
 import { useNavigation } from "./providers/navigation/NavigationContext";
 import WalletView from "./views/WalletView";
 import HomeView from "./views/HomeView";
+import LotteryGridList from "./components/lottery/components/LotteryGridList";
 import LotteryDetailPage from "./components/lottery/components/LotteryDetailPage";
 
 const Pages: React.FC = () => {
@@ -12,6 +13,10 @@ const Pages: React.FC = () => {
 
   if (currentPage === "/" || currentPage === "") {
     return <HomeView />;
+  }
+
+  if (currentPage === "/lottery") {
+    return <LotteryGridList />;
   }
 
   if (currentPage === "/wallet") {
