@@ -1,4 +1,4 @@
-import { FC, useState } from "react"
+import { FC, useState, useEffect } from "react"
 import {
 	useSignAndExecuteTransaction,
 	useCurrentAccount,
@@ -15,6 +15,9 @@ import {
 	suiToMist,
 	SUIYAN_TOKEN_TYPE,
 } from "../../../config/constants"
+
+const SUI_COIN_TYPE = "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI"
+const SUIYAN_COIN_TYPE = "0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac::suiyan::SUIYAN"
 
 interface LotteryCreationProps {
 	isLoading: boolean
@@ -39,6 +42,41 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 	const [feeInSui, setFeeInSui] = useState<string>(mistToSui(DEFAULT_FEE))
 	const [localStatus, setLocalStatus] = useState<string>("")
 	const [showConnectWallet, setShowConnectWallet] = useState(false)
+	const [suiyanPerSui, setSuiyanPerSui] = useState<number | null>(null)
+
+	// Fetch SUIYAN/SUI price ratio
+	useEffect(() => {
+		const fetchPrices = async () => {
+			try {
+				const [suiRes, suiyanRes] = await Promise.all([
+					fetch("https://aftermath.finance/api/price-info", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ coins: [SUI_COIN_TYPE] }),
+					}),
+					fetch("https://aftermath.finance/api/price-info", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ coins: [SUIYAN_COIN_TYPE] }),
+					}),
+				])
+
+				const suiData = await suiRes.json()
+				const suiyanData = await suiyanRes.json()
+
+				const suiPrice = suiData[SUI_COIN_TYPE]?.price
+				const suiyanPrice = suiyanData[SUIYAN_COIN_TYPE]?.price
+
+				if (suiPrice && suiyanPrice) {
+					setSuiyanPerSui(suiPrice / suiyanPrice)
+				}
+			} catch (error) {
+				console.error("Failed to fetch prices:", error)
+			}
+		}
+
+		fetchPrices()
+	}, [])
 
 	// Query SUIYAN coins
 	const { data: suiyanCoins } = useSuiClientQuery(
@@ -173,6 +211,30 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					Create a 3x3 lottery with 9 slots. Configure the prize pool and entry
 					fee below.
 				</p>
+			</div>
+
+			{/* Balance & Price Info */}
+			<div className="bg-black/40 border border-white/10 p-4 rounded-sm space-y-2">
+				<div className="flex justify-between items-center">
+					<span className="text-sm text-muted-foreground">Your SUIYAN Balance:</span>
+					<span className="text-primary font-bold font-mono">
+						{suiyanCoins
+							? mistToSui(Number(suiyanCoins.data.reduce((sum, coin) => sum + BigInt(coin.balance), BigInt(0))))
+							: "0"} SUIYAN
+					</span>
+				</div>
+				{suiyanPerSui !== null && (
+					<div className="flex justify-between items-center">
+						<span className="text-sm text-muted-foreground">Current Rate:</span>
+						<span className="text-secondary font-bold font-mono">
+							1 SUI = {suiyanPerSui >= 1000000
+								? `${(suiyanPerSui / 1000000).toFixed(2)}M`
+								: suiyanPerSui >= 1000
+								? `${(suiyanPerSui / 1000).toFixed(1)}K`
+								: suiyanPerSui.toFixed(0)} SUIYAN
+						</span>
+					</div>
+				)}
 			</div>
 
 			{/* Prize Amount Input */}
