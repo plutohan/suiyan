@@ -48,7 +48,7 @@ const NavBar: React.FC = () => {
 							/>
 						</div>
 						<span className="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_auto] pr-1" style={{ fontFamily: 'Bangers, system-ui', letterSpacing: '0.05em' }}>
-							SUIYAN PLAY
+							suiyan.fun
 						</span>
 					</div>
 

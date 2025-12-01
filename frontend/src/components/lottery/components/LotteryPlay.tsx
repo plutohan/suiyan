@@ -4,6 +4,7 @@ import { Transaction } from "@mysten/sui/transactions"
 import {
 	PACKAGE_ID,
 	RANDOM_OBJECT_ID,
+	LOTTERY_CONFIG_ID,
 	mistToSui,
 } from "../../../config/constants"
 import { AlertTriangle } from "lucide-react"
@@ -71,6 +72,7 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 				arguments: [
 					tx.pure.u64(slotIndex),
 					tx.object(lotteryObjectId),
+					tx.object(LOTTERY_CONFIG_ID),
 					tx.object(RANDOM_OBJECT_ID),
 					coin,
 				],

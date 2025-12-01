@@ -25,7 +25,7 @@ export function HeroBanner() {
 				{/* Grid overlay */}
 				<div className="absolute inset-0 bg-[linear-gradient(rgba(255,215,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,215,0,0.05)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:linear-gradient(to_bottom,white,transparent)] z-[2]"></div>
 
-				<div className="relative z-10 p-8 md:p-16">
+				<div className="relative z-10 p-8 md:p-16 flex justify-center">
 					{/* Content */}
 					<div className="space-y-6 max-w-2xl">
 						<div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-secondary/10 border border-secondary/40 text-secondary font-mono text-xs tracking-widest uppercase">

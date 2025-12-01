@@ -3,7 +3,7 @@
 
 // Your deployed suiyan_play lottery package ID
 export const PACKAGE_ID =
-	"0xc63e38207267469fa9a4ee0e3104292eafe33a49a9874da2714b093150c86aa8"
+	"0xa2303fe152f756c3b4d73b4d3226e193cb44b785ff20207c21b040f0dd3e0bcc"
 
 // Suiyan Token Package ID (separate package)
 export const SUIYAN_TOKEN_PACKAGE_ID =
@@ -16,6 +16,9 @@ export const TREASURY_CAP_ID =
 
 // Sui Random object ID (standard on all networks)
 export const RANDOM_OBJECT_ID = "0x8"
+
+// LotteryConfig shared object ID (created at init)
+export const LOTTERY_CONFIG_ID = "0x8281e9ecb3ca00c23f1051c4b167ab4af00a075f91b0b8dff5b02d28145acc06"
 
 // Contract constants
 export const SLOT_COUNT = 9

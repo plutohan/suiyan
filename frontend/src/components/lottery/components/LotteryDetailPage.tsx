@@ -11,6 +11,7 @@ import {
 	mistToSui,
 	PACKAGE_ID,
 	RANDOM_OBJECT_ID,
+	LOTTERY_CONFIG_ID,
 } from "../../../config/constants"
 import { Transaction } from "@mysten/sui/transactions"
 import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet } from "lucide-react"
@@ -77,6 +78,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 				arguments: [
 					tx.pure.u64(selectedSlot),
 					tx.object(lottery.id),
+					tx.object(LOTTERY_CONFIG_ID),
 					tx.object(RANDOM_OBJECT_ID),
 					coin,
 				],

@@ -1,6 +1,6 @@
 #[test_only]
 module suiyan_play::tests {
-    use suiyan_play::lottery;
+    use suiyan_play::lottery::{Self, LotteryConfig};
     use suiyan_token::suiyan::{Self as token, SUIYAN};
     use sui::random::{Self, Random};
     use sui::test_scenario::{Self as ts};
@@ -13,12 +13,20 @@ module suiyan_play::tests {
     const LOTTERY_PRIZE: u64 = 100_000_000; // 0.1 SUIYAN tokens
     const FEE: u64 = 15_000_000; // 0.015 SUI
 
+    // Helper to create test config
+    fun create_test_config(ctx: &mut tx_context::TxContext): LotteryConfig {
+        lottery::create_config_for_testing(ctx)
+    }
+
     #[test]
     fun test_create_lottery_and_pick() {
         let mut scenario = ts::begin(@0x0);
         let mut treasury = token::init_for_testing(ts::ctx(&mut scenario));
         random::create_for_testing(ts::ctx(&mut scenario));
         ts::next_tx(&mut scenario, ADMIN);
+
+        // Create test config
+        let config = create_test_config(ts::ctx(&mut scenario));
 
         // Create lottery with SUIYAN tokens as prize
         {
@@ -33,7 +41,7 @@ module suiyan_play::tests {
             let r = ts::take_shared<Random>(&scenario);
             let fee_payment = coin::mint_for_testing<SUI>(FEE, ts::ctx(&mut scenario));
 
-            lottery::pick_slot(0, &mut lottery, &r, fee_payment, ts::ctx(&mut scenario));
+            lottery::pick_slot(0, &mut lottery, &config, &r, fee_payment, ts::ctx(&mut scenario));
             assert!(lottery::get_slot(&lottery, 0) == true, 1);
 
             ts::return_shared(lottery);
@@ -41,6 +49,7 @@ module suiyan_play::tests {
         };
 
         test_utils::destroy(treasury);
+        test_utils::destroy(config);
         ts::end(scenario);
     }
 
@@ -50,6 +59,9 @@ module suiyan_play::tests {
         let mut treasury = token::init_for_testing(ts::ctx(&mut scenario));
         random::create_for_testing(ts::ctx(&mut scenario));
         ts::next_tx(&mut scenario, ADMIN);
+
+        // Create test config
+        let config = create_test_config(ts::ctx(&mut scenario));
 
         {
             let payment = coin::mint(&mut treasury, LOTTERY_PRIZE, ts::ctx(&mut scenario));
@@ -66,7 +78,7 @@ module suiyan_play::tests {
             while (lottery::is_active(&lottery) && i < lottery::slot_count()) {
                 if (!lottery::get_slot(&lottery, i)) {
                     let fee = coin::mint_for_testing<SUI>(FEE, ts::ctx(&mut scenario));
-                    lottery::pick_slot(i, &mut lottery, &r, fee, ts::ctx(&mut scenario));
+                    lottery::pick_slot(i, &mut lottery, &config, &r, fee, ts::ctx(&mut scenario));
                 };
                 i = i + 1;
             };
@@ -86,6 +98,7 @@ module suiyan_play::tests {
         };
 
         test_utils::destroy(treasury);
+        test_utils::destroy(config);
         ts::end(scenario);
     }
 
@@ -95,6 +108,9 @@ module suiyan_play::tests {
         let mut treasury = token::init_for_testing(ts::ctx(&mut scenario));
         random::create_for_testing(ts::ctx(&mut scenario));
         ts::next_tx(&mut scenario, ADMIN);
+
+        // Create test config
+        let config = create_test_config(ts::ctx(&mut scenario));
 
         {
             let payment = coin::mint(&mut treasury, LOTTERY_PRIZE, ts::ctx(&mut scenario));
@@ -107,7 +123,7 @@ module suiyan_play::tests {
             let mut lottery = ts::take_shared<lottery::Lottery>(&scenario);
             let r = ts::take_shared<Random>(&scenario);
             let fee_payment = coin::mint_for_testing<SUI>(FEE, ts::ctx(&mut scenario));
-            lottery::pick_slot(0, &mut lottery, &r, fee_payment, ts::ctx(&mut scenario));
+            lottery::pick_slot(0, &mut lottery, &config, &r, fee_payment, ts::ctx(&mut scenario));
             ts::return_shared(lottery);
             ts::return_shared(r);
         };
@@ -122,6 +138,7 @@ module suiyan_play::tests {
         };
 
         test_utils::destroy(treasury);
+        test_utils::destroy(config);
         ts::end(scenario);
     }
 }
