@@ -7,16 +7,16 @@ compiled_package_info:
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
     sui_system: "0000000000000000000000000000000000000000000000000000000000000003"
     suiyan_play: "0000000000000000000000000000000000000000000000000000000000000000"
-    suiyan_token: "0000000000000000000000000000000000000000000000000000000000000000"
-  source_digest: FC74E05CA49A29FAECBF1378C42067EFDBCCFC67AC833377D80A991FD686A29A
+    suiyan_token: 145fbaf00fa5ffad7eeef2c3a0eac1a7dc45ced91c7552e4a964a1c1139adca9
+  source_digest: DD6A8A9FF91D9D9AB0A95E77FF0669060C33FFCA2BABAAF78D2EF5434AD3790E
   build_flags:
-    dev_mode: true
-    test_mode: true
+    dev_mode: false
+    test_mode: false
     generate_docs: false
     save_disassembly: false
     install_dir: ~
     force_recompilation: false
-    lock_file: ~
+    lock_file: "./Move.lock"
     fetch_deps_only: false
     skip_fetch_latest_git_deps: false
     default_flavor: sui

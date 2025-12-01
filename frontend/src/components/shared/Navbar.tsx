@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useNavigation } from "../../providers/navigation/NavigationContext"
 import { ConnectButton, useCurrentAccount, useSuiClientQuery } from "@mysten/dapp-kit"
-import { SUIYAN_TOKEN_TYPE, mistToSui } from "../../config/constants"
+import { SUIYAN_TOKEN_TYPE, formatSuiBalance, formatSuiyanBalance } from "../../config/constants"
 
 const NavBar: React.FC = () => {
 	const { currentPage, navigate } = useNavigation()
@@ -73,15 +73,15 @@ const NavBar: React.FC = () => {
 						<div className="hidden md:flex items-center gap-3 px-4 py-2 bg-card/50 border border-primary/20 rounded">
 							<div className="flex flex-col text-xs">
 								<div className="flex items-center gap-2">
-									<span className="font-bold text-primary uppercase tracking-wider">SUIYAN:</span>
+									<span className="font-bold text-primary uppercase tracking-wider">$SUIYAN:</span>
 									<span className="font-mono text-foreground font-semibold">
-										{suiyanBalance ? mistToSui(parseInt(suiyanBalance.totalBalance)) : "0"}
+										{suiyanBalance ? formatSuiyanBalance(parseInt(suiyanBalance.totalBalance)) : "0"}
 									</span>
 								</div>
 								<div className="flex items-center gap-2">
-									<span className="font-bold text-secondary uppercase tracking-wider">SUI:</span>
+									<span className="font-bold text-secondary uppercase tracking-wider">$SUI:</span>
 									<span className="font-mono text-foreground font-semibold">
-										{suiBalance ? mistToSui(parseInt(suiBalance.totalBalance)) : "0"}
+										{suiBalance ? formatSuiBalance(parseInt(suiBalance.totalBalance)) : "0"}
 									</span>
 								</div>
 							</div>
@@ -157,15 +157,15 @@ const NavBar: React.FC = () => {
 							<div className="flex items-center gap-3 px-4 py-3 bg-card/50 border border-primary/20 rounded">
 								<div className="flex flex-col text-sm">
 									<div className="flex items-center gap-2">
-										<span className="font-bold text-primary uppercase tracking-wider">SUIYAN:</span>
+										<span className="font-bold text-primary uppercase tracking-wider">$SUIYAN:</span>
 										<span className="font-mono text-foreground font-semibold">
-											{suiyanBalance ? mistToSui(parseInt(suiyanBalance.totalBalance)) : "0"}
+											{suiyanBalance ? formatSuiyanBalance(parseInt(suiyanBalance.totalBalance)) : "0"}
 										</span>
 									</div>
 									<div className="flex items-center gap-2">
-										<span className="font-bold text-secondary uppercase tracking-wider">SUI:</span>
+										<span className="font-bold text-secondary uppercase tracking-wider">$SUI:</span>
 										<span className="font-mono text-foreground font-semibold">
-											{suiBalance ? mistToSui(parseInt(suiBalance.totalBalance)) : "0"}
+											{suiBalance ? formatSuiBalance(parseInt(suiBalance.totalBalance)) : "0"}
 										</span>
 									</div>
 								</div>

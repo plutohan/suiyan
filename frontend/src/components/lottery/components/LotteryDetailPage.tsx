@@ -340,11 +340,11 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 									className="text-4xl font-bold text-white mb-1"
 									style={{ fontFamily: "Bangers, system-ui" }}
 								>
-									{lottery.prize} SUIYAN
+									{lottery.prize} $SUIYAN
 								</h3>
 								{suiyanPerSui && (
 									<p className="text-muted-foreground font-mono text-sm mb-1">
-										≈ {(parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(4)} SUI
+										≈ {(parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(4)} $SUI
 									</p>
 								)}
 								<p className="text-secondary font-mono text-sm tracking-wide mb-6">
@@ -422,11 +422,11 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 									</span>
 									<div className="text-right">
 										<span className="text-primary font-bold font-mono">
-											{lottery.fee} SUI
+											{lottery.fee} $SUI
 										</span>
 										{suiyanPerSui && (
 											<p className="text-xs text-muted-foreground font-mono">
-												≈ {Math.round(parseFloat(lottery.fee) * suiyanPerSui).toLocaleString()} SUIYAN
+												≈ {Math.round(parseFloat(lottery.fee) * suiyanPerSui).toLocaleString()} $SUIYAN
 											</p>
 										)}
 									</div>
@@ -468,7 +468,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 												className="w-full h-12 bg-secondary text-black font-bold uppercase tracking-wider hover:bg-cyan-400 transition-all disabled:opacity-50"
 											>
 												COLLECT FEE (
-												{lottery.remainingFee} SUI)
+												{lottery.remainingFee} $SUI)
 											</button>
 										)}
 										{canCollectPrize && (
@@ -481,7 +481,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 												COLLECT PRIZE ({
 													lottery.prize
 												}{" "}
-												SUIYAN)
+												$SUIYAN)
 											</button>
 										)}
 									</div>
@@ -537,11 +537,11 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 								</span>
 								<div className="text-right">
 									<span className="text-primary font-bold font-mono text-xl">
-										{mistToSui(lottery.feeMist)} SUI
+										{mistToSui(lottery.feeMist)} $SUI
 									</span>
 									{suiyanPerSui && (
 										<p className="text-xs text-muted-foreground font-mono">
-											≈ {Math.round(parseFloat(mistToSui(lottery.feeMist)) * suiyanPerSui).toLocaleString()} SUIYAN
+											≈ {Math.round(parseFloat(mistToSui(lottery.feeMist)) * suiyanPerSui).toLocaleString()} $SUIYAN
 										</p>
 									)}
 								</div>

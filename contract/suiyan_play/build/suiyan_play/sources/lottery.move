@@ -15,6 +15,25 @@ const ENotCreator: u64 = 4;
 const ENotWinner: u64 = 5;
 const ENoWinner: u64 = 6;
 const SLOT_COUNT: u64 = 9;
+
+// Admin fee configuration
+// Purpose: When a player loses, a percentage of their entry fee goes to admin.
+// This prevents abuse where attackers could exploit gas cost differences
+// between winning and losing paths to gain an advantage.
+// By adding a real SUI cost to losing (admin fee transfer), losing becomes
+// more expensive than winning, removing any incentive to manipulate outcomes.
+
+/// Admin capability - holder can update lottery config
+public struct AdminCap has key, store {
+  id: UID
+}
+
+/// Global lottery configuration - shared object
+public struct LotteryConfig has key {
+  id: UID,
+  admin: address,
+  loss_fee_bps: u64  // Fee in basis points (500 = 5%)
+}
 // LOTTERY_PRIZE and FEE are now parameters instead of constants
 // const LOTTERY_PRIZE: u64 = 100_000_000; // 0.1 SUI in MIST (1 SUI = 1,000,000,000 MIST)
 // const FEE: u64 = 15_000_000; // 0.015 SUI in MIST
@@ -45,6 +64,43 @@ public struct PickedEvent has copy, drop, store {
   slot_index: u64,
   won: bool,
   random_number: u64,
+}
+
+/// Initialize the lottery module - creates AdminCap and LotteryConfig
+fun init(ctx: &mut tx_context::TxContext) {
+  let sender = tx_context::sender(ctx);
+
+  // Create and transfer AdminCap to deployer
+  let admin_cap = AdminCap {
+    id: object::new(ctx)
+  };
+  transfer::transfer(admin_cap, sender);
+
+  // Create and share LotteryConfig with default values
+  let config = LotteryConfig {
+    id: object::new(ctx),
+    admin: sender,
+    loss_fee_bps: 500  // Default 5% fee
+  };
+  transfer::share_object(config);
+}
+
+/// Update the loss fee (only admin with AdminCap can call)
+public fun update_loss_fee(
+  _: &AdminCap,
+  config: &mut LotteryConfig,
+  new_fee_bps: u64
+) {
+  config.loss_fee_bps = new_fee_bps;
+}
+
+/// Update the admin address (only current admin with AdminCap can call)
+public fun update_admin(
+  _: &AdminCap,
+  config: &mut LotteryConfig,
+  new_admin: address
+) {
+  config.admin = new_admin;
 }
 
 public entry fun create_lottery(
@@ -108,11 +164,12 @@ fun count_unpicked_slots(slots: &vector<bool>): u64 {
 
 entry fun pick_slot(
   slot_index: u64,
-  lottery:&mut Lottery,
+  lottery: &mut Lottery,
+  config: &LotteryConfig,
   r: &Random,
   payment: Coin<SUI>,
   ctx: &mut tx_context::TxContext
-):u64 {
+): u64 {
   assert!(option::is_none(&lottery.winner), ENotActiveLottery);
   assert!(lottery.slots[slot_index] == false, EInvalidSlot);
   assert!(coin::value(&payment) == lottery.fee, EInsufficientPayment);
@@ -142,13 +199,21 @@ entry fun pick_slot(
   };
 
   let sender = tx_context::sender(ctx);
+
   if (won) {
     lottery.winner = option::some(sender);
     lottery.winning_slot = slot_index;
   } else {
-    // Update last_picker and last_slot when not winning to keep gas costs consistent
+    // Update last picker tracking
     lottery.last_picker = option::some(sender);
     lottery.last_slot = slot_index;
+
+    // Calculate and transfer admin fee (percentage of entry fee goes to admin on loss)
+    let admin_fee = (lottery.fee * config.loss_fee_bps) / 10000;
+    if (admin_fee > 0 && balance::value(&lottery.remaining_fee) >= admin_fee) {
+      let admin_coin = coin::from_balance(balance::split(&mut lottery.remaining_fee, admin_fee), ctx);
+      transfer::public_transfer(admin_coin, config.admin);
+    };
   };
 
   event::emit(PickedEvent {
@@ -235,4 +300,23 @@ public fun get_last_slot(lottery: &Lottery): u64 {
 
 public fun get_fee(lottery: &Lottery): u64 {
   lottery.fee
+}
+
+// LotteryConfig accessor functions
+public fun get_config_admin(config: &LotteryConfig): address {
+  config.admin
+}
+
+public fun get_config_loss_fee_bps(config: &LotteryConfig): u64 {
+  config.loss_fee_bps
+}
+
+// Test-only functions
+#[test_only]
+public fun create_config_for_testing(ctx: &mut tx_context::TxContext): LotteryConfig {
+  LotteryConfig {
+    id: object::new(ctx),
+    admin: tx_context::sender(ctx),
+    loss_fee_bps: 500
+  }
 }

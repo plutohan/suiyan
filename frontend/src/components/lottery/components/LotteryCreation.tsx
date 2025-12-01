@@ -211,7 +211,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 									)
 							  )
 							: "0"}{" "}
-						SUIYAN
+						$SUIYAN
 					</span>
 				</div>
 				{suiyanPerSui !== null && (
@@ -220,13 +220,13 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 							Current Rate:
 						</span>
 						<span className="text-secondary font-bold font-mono">
-							1 SUI ={" "}
+							1 $SUI ={" "}
 							{suiyanPerSui >= 1000000
 								? `${(suiyanPerSui / 1000000).toFixed(2)}M`
 								: suiyanPerSui >= 1000
 								? `${(suiyanPerSui / 1000).toFixed(1)}K`
 								: suiyanPerSui.toFixed(0)}{" "}
-							SUIYAN
+							$SUIYAN
 						</span>
 					</div>
 				)}
@@ -269,9 +269,9 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					))}
 				</div>
 				<p className="text-xs text-muted-foreground mt-2 flex justify-between">
-					<span>Winner receives this amount in SUIYAN tokens</span>
+					<span>Winner receives this amount in $SUIYAN tokens</span>
 					<span className="text-secondary font-mono">
-						≈ {suiyanPerSui !== null ? prizeValueInSui.toFixed(4) : "..."} SUI
+						≈ {suiyanPerSui !== null ? prizeValueInSui.toFixed(4) : "..."} $SUI
 					</span>
 				</p>
 			</div>

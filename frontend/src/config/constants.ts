@@ -32,6 +32,23 @@ export const mistToSui = (mist: number): string => {
 	return parseFloat((mist / 1_000_000_000).toFixed(9)).toString()
 }
 
+// Format SUI balance (up to 4 decimals)
+export const formatSuiBalance = (mist: number): string => {
+	const value = mist / 1_000_000_000
+	return parseFloat(value.toFixed(4)).toString()
+}
+
+// Format SUIYAN balance (use k/M notation)
+export const formatSuiyanBalance = (mist: number): string => {
+	const value = mist / 1_000_000_000
+	if (value >= 1_000_000) {
+		return `${(value / 1_000_000).toFixed(1)}M`
+	} else if (value >= 1_000) {
+		return `${(value / 1_000).toFixed(1)}k`
+	}
+	return parseFloat(value.toFixed(2)).toString()
+}
+
 // Helper function to convert SUI/SUIYAN to MIST
 export const suiToMist = (sui: number): number => {
 	return Math.floor(sui * 1_000_000_000)
