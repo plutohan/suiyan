@@ -270,17 +270,17 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 			)}
 
 			{lottery && (
-				<div className="grid lg:grid-cols-12 gap-8 flex-1">
+				<div className="grid lg:grid-cols-12 gap-8">
 					{/* Left Column: The Grid (Tactical Map) */}
-					<div className="lg:col-span-7 flex flex-col">
-						<div className="flex-1 bg-card/30 border border-white/10 p-1 relative overflow-hidden group">
+					<div className="lg:col-span-7">
+						<div className="bg-card/30 border border-white/10 p-1 relative overflow-hidden group">
 							{/* Decorative corners */}
 							<div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary/50"></div>
 							<div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary/50"></div>
 							<div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary/50"></div>
 							<div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary/50"></div>
 
-							<div className="h-full p-8 flex flex-col items-center justify-center">
+							<div className="p-8 flex flex-col items-center">
 								<h2
 									className="text-2xl font-bold text-white mb-8 flex items-center gap-2"
 									style={{ fontFamily: "Bangers, system-ui" }}
