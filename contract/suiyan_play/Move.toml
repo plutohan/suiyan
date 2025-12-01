@@ -20,7 +20,7 @@ suiyan_token = { local = "../suiyan_token" }
 
 [addresses]
 suiyan_play = "0x0"
-suiyan_token = "0x145fbaf00fa5ffad7eeef2c3a0eac1a7dc45ced91c7552e4a964a1c1139adca9"
+suiyan_token = "0xe0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac"
 
 # Published addresses will be stored in Move.lock after deployment
 

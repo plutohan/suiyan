@@ -6,6 +6,7 @@ import {
 	RANDOM_OBJECT_ID,
 	LOTTERY_CONFIG_ID,
 	mistToSui,
+	rawToSuiyan,
 } from "../../../config/constants"
 import { AlertTriangle } from "lucide-react"
 
@@ -208,7 +209,7 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 						<div className="grid grid-cols-2 gap-2 text-sm">
 							<div>
 								<span className="font-semibold">Prize:</span>{" "}
-								{mistToSui(lotteryData.prize)} SUIYAN
+								{rawToSuiyan(lotteryData.prize)} SUIYAN
 								{lotteryData.prize === 0 && (
 									<span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
 										(Collected ✓)
@@ -310,7 +311,7 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 								</div>
 								<div className="flex justify-between">
 									<span className="text-muted-foreground">Prize Pool</span>
-									<span className="text-secondary font-bold">{mistToSui(lotteryData.prize)} SUIYAN</span>
+									<span className="text-secondary font-bold">{rawToSuiyan(lotteryData.prize)} SUIYAN</span>
 								</div>
 							</div>
 
@@ -375,7 +376,7 @@ export const LotteryPlay: FC<LotteryPlayProps> = ({
 						{isLoading
 							? "Processing..."
 							: canCollectPrize
-							? `Collect Prize (${mistToSui(lotteryData!.prize)} SUIYAN)`
+							? `Collect Prize (${rawToSuiyan(lotteryData!.prize)} SUIYAN)`
 							: isWinner && lotteryData?.prize === 0
 							? "Prize Collected ✓"
 							: "Collect Prize"}

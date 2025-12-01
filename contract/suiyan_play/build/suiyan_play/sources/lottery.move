@@ -16,13 +16,6 @@ const ENotWinner: u64 = 5;
 const ENoWinner: u64 = 6;
 const SLOT_COUNT: u64 = 9;
 
-// Admin fee configuration
-// Purpose: When a player loses, a percentage of their entry fee goes to admin.
-// This prevents abuse where attackers could exploit gas cost differences
-// between winning and losing paths to gain an advantage.
-// By adding a real SUI cost to losing (admin fee transfer), losing becomes
-// more expensive than winning, removing any incentive to manipulate outcomes.
-
 /// Admin capability - holder can update lottery config
 public struct AdminCap has key, store {
   id: UID
@@ -33,10 +26,12 @@ public struct LotteryConfig has key {
   id: UID,
   admin: address,
   loss_fee_bps: u64  // Fee in basis points (500 = 5%)
+  // Purpose: When a player loses, a percentage of their entry fee goes to admin.
+  // This prevents abuse where attackers could exploit gas cost differences
+  // between winning and losing paths to gain an advantage.
+  // By adding a real SUI cost to losing (admin fee transfer), losing becomes
+  // more expensive than winning, removing any incentive to manipulate outcomes.
 }
-// LOTTERY_PRIZE and FEE are now parameters instead of constants
-// const LOTTERY_PRIZE: u64 = 100_000_000; // 0.1 SUI in MIST (1 SUI = 1,000,000,000 MIST)
-// const FEE: u64 = 15_000_000; // 0.015 SUI in MIST
 
 public struct Lottery has key {
   id: UID,
@@ -103,7 +98,7 @@ public fun update_admin(
   config.admin = new_admin;
 }
 
-public entry fun create_lottery(
+public fun create_lottery(
   payment: Coin<SUIYAN>,  // Prize payment in SUIYAN tokens
   fee: u64,  // Fee per slot in MIST (SUI)
   ctx: &mut tx_context::TxContext
@@ -195,7 +190,7 @@ entry fun pick_slot(
     let winning_number = 10000 / lottery.slots.length();
     let mut generator = new_generator(r, ctx);
     random_number = generator.generate_u64_in_range(0,10000);
-    won = random_number < winning_number * 3; //@TODO this is for testing purpose
+    won = random_number < winning_number;
   };
 
   let sender = tx_context::sender(ctx);

@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useCallback } from "react"
 import { useSuiClient, useCurrentAccount } from "@mysten/dapp-kit"
-import { mistToSui } from "../../config/constants"
+import { mistToSui, rawToSuiyan } from "../../config/constants"
 import { LotteryPlay } from "./components/LotteryPlay"
 import { LotteryGrid } from "./components/LotteryGrid"
 import { fetchAllLotteries as fetchLotteriesLive } from "./lotteryApi"
@@ -89,7 +89,7 @@ const LotteryInteraction: FC = () => {
 
 				setStatus(`Lottery Status:
   Active: ${isActive}
-  Prize: ${mistToSui(prize)} SUI${
+  Prize: ${rawToSuiyan(prize)} SUIYAN${
 					prizeClaimed
 						? " (Claimed Anonymously ✓)"
 						: prize === 0

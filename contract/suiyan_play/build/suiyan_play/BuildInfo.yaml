@@ -7,8 +7,8 @@ compiled_package_info:
     sui: "0000000000000000000000000000000000000000000000000000000000000002"
     sui_system: "0000000000000000000000000000000000000000000000000000000000000003"
     suiyan_play: "0000000000000000000000000000000000000000000000000000000000000000"
-    suiyan_token: 145fbaf00fa5ffad7eeef2c3a0eac1a7dc45ced91c7552e4a964a1c1139adca9
-  source_digest: DD6A8A9FF91D9D9AB0A95E77FF0669060C33FFCA2BABAAF78D2EF5434AD3790E
+    suiyan_token: e0fbaffa16409259e431b3e1ff97bf6129641945b42e5e735c99aeda73a595ac
+  source_digest: E67576C1C50468592E55FA03FB91F5ADCD3A20166AF8DCF145659961BF003302
   build_flags:
     dev_mode: false
     test_mode: false
@@ -36,7 +36,7 @@ compiled_package_info:
           kind:
             Git:
               git_url: "https://github.com/MystenLabs/sui.git"
-              git_rev: 9a4d4016ba66c646c76c4b8d54fa9e767f240ab1
+              git_rev: d75fae3aa7fa3545b5803980a1e0c965b8bbf48e
               subdir: crates/sui-framework/packages/bridge
           subst: ~
           digest: ~
@@ -46,7 +46,7 @@ compiled_package_info:
           kind:
             Git:
               git_url: "https://github.com/MystenLabs/sui.git"
-              git_rev: 9a4d4016ba66c646c76c4b8d54fa9e767f240ab1
+              git_rev: d75fae3aa7fa3545b5803980a1e0c965b8bbf48e
               subdir: crates/sui-framework/packages/move-stdlib
           subst: ~
           digest: ~
@@ -56,7 +56,7 @@ compiled_package_info:
           kind:
             Git:
               git_url: "https://github.com/MystenLabs/sui.git"
-              git_rev: 9a4d4016ba66c646c76c4b8d54fa9e767f240ab1
+              git_rev: d75fae3aa7fa3545b5803980a1e0c965b8bbf48e
               subdir: crates/sui-framework/packages/sui-framework
           subst: ~
           digest: ~
@@ -66,7 +66,7 @@ compiled_package_info:
           kind:
             Git:
               git_url: "https://github.com/MystenLabs/sui.git"
-              git_rev: 9a4d4016ba66c646c76c4b8d54fa9e767f240ab1
+              git_rev: d75fae3aa7fa3545b5803980a1e0c965b8bbf48e
               subdir: crates/sui-framework/packages/sui-system
           subst: ~
           digest: ~

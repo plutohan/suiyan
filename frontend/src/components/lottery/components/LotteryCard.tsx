@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { LotterySummary } from "../lotteryApi"
 import { Trophy, Zap } from "lucide-react"
+import { formatSuiBalance, formatSuiyanBalance } from "../../../config/constants"
 
 type Props = {
 	game: LotterySummary
@@ -54,10 +55,10 @@ const LotteryCard: FC<Props> = ({ game, onSelect }) => {
 						<div className="flex justify-between items-center">
 							<div className="flex items-center gap-2 text-secondary">
 								<Zap className="w-4 h-4" />
-								<span className="text-lg font-bold">{game.fee} $SUI</span>
+								<span className="text-lg font-bold">{formatSuiBalance(game.feeMist)} $SUI</span>
 							</div>
 							<div className="text-xl font-bold text-primary drop-shadow-sm">
-								{game.prize} <span className="text-primary">$SUIYAN</span>
+								{formatSuiyanBalance(game.prizeMist)} <span className="text-primary">$SUIYAN</span>
 							</div>
 						</div>
 					</div>

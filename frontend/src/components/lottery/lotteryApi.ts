@@ -1,5 +1,5 @@
 import { SuiClient, type EventId } from "@mysten/sui/client"
-import { mistToSui, PACKAGE_ID } from "../../config/constants"
+import { mistToSui, rawToSuiyan, PACKAGE_ID } from "../../config/constants"
 
 export type LotterySummary = {
 	id: string
@@ -57,13 +57,13 @@ const parseLotteryFields = (
 		winningSlot,
 		winner,
 		creator: String(fields.creator || ""),
-		prize: mistToSui(prize),
+		prize: rawToSuiyan(prize),  // SUIYAN has 6 decimals
 		prizeMist: prize,
-		prizeValue: Number(mistToSui(prize)),
-		fee: mistToSui(fee),
+		prizeValue: Number(rawToSuiyan(prize)),
+		fee: mistToSui(fee),  // SUI has 9 decimals
 		feeMist: fee,
 		feeValue: Number(mistToSui(fee)),
-		remainingFee: mistToSui(remainingFee),
+		remainingFee: mistToSui(remainingFee),  // SUI has 9 decimals
 		remainingFeeMist: remainingFee,
 		prizeClaimed: Boolean(fields.prize_claimed),
 		createdAt,

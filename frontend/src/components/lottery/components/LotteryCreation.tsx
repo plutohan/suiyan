@@ -10,8 +10,9 @@ import { Transaction } from "@mysten/sui/transactions"
 import {
 	PACKAGE_ID,
 	DEFAULT_LOTTERY_PRIZE,
-	mistToSui,
+	rawToSuiyan,
 	suiToMist,
+	suiyanToRaw,
 	SUIYAN_TOKEN_TYPE,
 } from "../../../config/constants"
 import { usePrice } from "../../../providers/price/PriceContext"
@@ -35,7 +36,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 
 	// State for prize and probability inputs
 	const [prizeInTokens, setPrizeInTokens] = useState<string>(
-		mistToSui(DEFAULT_LOTTERY_PRIZE)
+		rawToSuiyan(DEFAULT_LOTTERY_PRIZE)
 	)
 	const [multiplier, setMultiplier] = useState<string>("8")
 	const [localStatus, setLocalStatus] = useState<string>("")
@@ -64,9 +65,9 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 		}
 	)
 
-	// Calculate total SUIYAN balance
+	// Calculate total SUIYAN balance (SUIYAN has 6 decimals)
 	const totalSuiyanBalance = suiyanCoins
-		? Number(suiyanCoins.data.reduce((sum, coin) => sum + BigInt(coin.balance), BigInt(0))) / 1_000_000_000
+		? Number(suiyanCoins.data.reduce((sum, coin) => sum + BigInt(coin.balance), BigInt(0))) / 1_000_000
 		: 0
 	const hasInsufficientBalance = (parseFloat(prizeInTokens) || 0) > totalSuiyanBalance
 
@@ -79,8 +80,8 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 			return
 		}
 
-		// Convert to base units (9 decimals for both SUIYAN tokens and SUI)
-		const prizeAmount = suiToMist(parseFloat(prizeInTokens) || 0)
+		// Convert to base units (6 decimals for SUIYAN, 9 decimals for SUI)
+		const prizeAmount = suiyanToRaw(parseFloat(prizeInTokens) || 0)
 		const feeInMist = suiToMist(calculatedFee)
 
 		// Validate inputs
@@ -108,9 +109,9 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 		)
 		if (totalBalance < BigInt(prizeAmount)) {
 			onStatusChange(
-				`Insufficient SUIYAN balance. You have ${mistToSui(
+				`Insufficient SUIYAN balance. You have ${rawToSuiyan(
 					Number(totalBalance)
-				)} but need ${mistToSui(prizeAmount)}`
+				)} but need ${rawToSuiyan(prizeAmount)}`
 			)
 			return
 		}
@@ -201,7 +202,7 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					</span>
 					<span className="text-primary font-bold font-mono">
 						{suiyanCoins
-							? mistToSui(
+							? rawToSuiyan(
 									Number(
 										suiyanCoins.data.reduce(
 											(sum, coin) =>
