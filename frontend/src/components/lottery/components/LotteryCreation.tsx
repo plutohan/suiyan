@@ -48,6 +48,10 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 		: 0
 	const calculatedFee = prizeValueInSui / (parseFloat(multiplier) || 1)
 
+	// Calculate creator profit: (9 slots × fee) - prize value
+	const totalFeesCollected = calculatedFee * 9
+	const creatorProfit = totalFeesCollected - prizeValueInSui
+
 	// Query SUIYAN coins
 	const { data: suiyanCoins } = useSuiClientQuery(
 		"getCoins",
@@ -242,6 +246,28 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					placeholder="Enter prize amount"
 					className="w-full px-4 py-3 border border-white/10 bg-black/40 text-white rounded-sm focus:outline-none focus:border-primary/50 font-mono"
 				/>
+				{/* Prize Percentage Buttons */}
+				<div className="flex gap-2 mt-2">
+					{[
+						{ label: "10%", value: 0.1 },
+						{ label: "25%", value: 0.25 },
+						{ label: "50%", value: 0.5 },
+						{ label: "MAX", value: 1 },
+					].map((preset) => (
+						<button
+							key={preset.label}
+							type="button"
+							onClick={() => {
+								const amount = totalSuiyanBalance * preset.value
+								setPrizeInTokens(amount.toFixed(2))
+							}}
+							disabled={totalSuiyanBalance <= 0}
+							className="flex-1 py-1.5 text-xs font-bold uppercase tracking-wider border border-white/10 bg-black/40 text-muted-foreground hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{preset.label}
+						</button>
+					))}
+				</div>
 				<p className="text-xs text-muted-foreground mt-2 flex justify-between">
 					<span>Winner receives this amount in SUIYAN tokens</span>
 					<span className="text-secondary font-mono">
@@ -296,6 +322,22 @@ export const LotteryCreation: FC<LotteryCreationProps> = ({
 					</span>
 					<span className="text-primary font-bold font-mono">
 						~{suiyanPerSui !== null ? prizeValueInSui.toFixed(2) : "..."} SUI
+					</span>
+				</div>
+				<div className="flex justify-between items-center">
+					<span className="text-sm text-muted-foreground">
+						Total Fees (9 slots):
+					</span>
+					<span className="text-secondary font-bold font-mono">
+						{suiyanPerSui !== null ? totalFeesCollected.toFixed(4) : "..."} SUI
+					</span>
+				</div>
+				<div className="flex justify-between items-center pt-2 border-t border-white/10">
+					<span className="text-sm font-bold text-white">
+						Estimated Profit:
+					</span>
+					<span className={`font-bold font-mono ${creatorProfit >= 0 ? "text-green-400" : "text-red-400"}`}>
+						{suiyanPerSui !== null ? (creatorProfit >= 0 ? "+" : "") + creatorProfit.toFixed(4) : "..."} SUI
 					</span>
 				</div>
 			</div>

@@ -340,6 +340,11 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 								>
 									{lottery.prize} SUIYAN
 								</h3>
+								{suiyanPerSui && (
+									<p className="text-muted-foreground font-mono text-sm mb-1">
+										≈ {(parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(4)} SUI
+									</p>
+								)}
 								<p className="text-secondary font-mono text-sm tracking-wide mb-6">
 									ESTIMATED JACKPOT
 								</p>
