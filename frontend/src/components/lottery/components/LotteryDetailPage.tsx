@@ -14,7 +14,7 @@ import {
 	LOTTERY_CONFIG_ID,
 } from "../../../config/constants"
 import { Transaction } from "@mysten/sui/transactions"
-import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet, Share2 } from "lucide-react"
+import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet } from "lucide-react"
 import { usePrice } from "../../../providers/price/PriceContext"
 
 type Props = {
