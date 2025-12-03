@@ -14,7 +14,7 @@ import {
 	LOTTERY_CONFIG_ID,
 } from "../../../config/constants"
 import { Transaction } from "@mysten/sui/transactions"
-import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet } from "lucide-react"
+import { ArrowLeft, Users, Zap, Trophy, Crosshair, Wallet, Share2 } from "lucide-react"
 import { usePrice } from "../../../providers/price/PriceContext"
 
 type Props = {
@@ -131,6 +131,69 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 		lottery.prizeMist > 0 &&
 		!lottery.prizeClaimed
 
+	const handleShareToX = () => {
+		if (!lottery) return
+
+		const lotteryUrl = `https://suiyan.fun/lottery/${gameId}`
+		const filledSlots = lottery.slots.filter(s => s).length
+		const totalSlots = lottery.slotCount
+		const slotsAvailable = totalSlots - filledSlots
+
+		let tweetText = ""
+
+		if (isWinner) {
+			// Winner sharing their victory
+			tweetText = `🏆 I JUST WON ${lottery.prize} $SUIYAN on @suiyan_fun! 🎰
+
+The odds were 1/${totalSlots} and I hit the jackpot! 💰
+
+Think you're lucky? Try your luck 👇
+${lotteryUrl}
+
+#Sui #SUIYAN #Crypto #Web3 #Lottery`
+		} else if (isCreator) {
+			// Creator promoting their lottery
+			tweetText = `🎰 I just created a lottery on @suiyan_fun!
+
+💰 Prize: ${lottery.prize} $SUIYAN
+⚡ Entry: ${lottery.fee} $SUI
+🎯 Slots: ${slotsAvailable}/${totalSlots} available
+📊 Win odds: 1/${slotsAvailable} (${(100/slotsAvailable).toFixed(1)}%)
+
+Feeling lucky? 🍀
+${lotteryUrl}
+
+#Sui #SUIYAN #Crypto #Web3`
+		} else if (!lottery.isActive) {
+			// Sharing ended lottery
+			tweetText = `🎰 Check out this lottery on @suiyan_fun!
+
+💰 Prize was ${lottery.prize} $SUIYAN
+🏆 Someone won big!
+
+Create your own or join the next one 👇
+https://suiyan.fun
+
+#Sui #SUIYAN #Crypto #Web3`
+		} else {
+			// Regular user sharing active lottery
+			tweetText = `🎰 Found this lottery on @suiyan_fun!
+
+💰 Prize: ${lottery.prize} $SUIYAN
+⚡ Entry: ${lottery.fee} $SUI
+🎯 Only ${slotsAvailable} slots left!
+📊 Win odds: 1/${slotsAvailable} (${(100/slotsAvailable).toFixed(1)}%)
+
+Who's feeling lucky? 🍀
+${lotteryUrl}
+
+#Sui #SUIYAN #Crypto #Web3 #Lottery`
+		}
+
+		const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
+		window.open(twitterUrl, '_blank', 'width=550,height=420')
+	}
+
 	const handleCollectFee = async () => {
 		if (!lottery || !isCreator) return
 		setIsSubmitting(true)
@@ -240,7 +303,7 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 					Back
 				</button>
 
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-3">
 					<div className="text-right hidden md:block">
 						<div className="text-xs text-muted-foreground uppercase tracking-widest">
 							Lottery ID
@@ -258,6 +321,19 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 					>
 						STATUS: {isActive ? "ACTIVE" : "ENDED"}
 					</span>
+					{lottery && (
+						<button
+							type="button"
+							onClick={handleShareToX}
+							className="h-10 px-4 border border-[#1DA1F2]/50 text-[#1DA1F2] bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20 rounded-none font-mono inline-flex items-center gap-2 transition-all hover:scale-105"
+							title="Share on X (Twitter)"
+						>
+							<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+								<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+							</svg>
+							<span className="hidden sm:inline">Share</span>
+						</button>
+					)}
 				</div>
 			</div>
 
@@ -484,6 +560,42 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 												$SUIYAN)
 											</button>
 										)}
+									</div>
+								)}
+
+								{/* Winner Share CTA */}
+								{isWinner && (
+									<div className="pt-4 border-t border-white/10">
+										<button
+											onClick={handleShareToX}
+											className="w-full h-12 bg-[#1DA1F2] text-white font-bold uppercase tracking-wider hover:bg-[#1a8cd8] transition-all flex items-center justify-center gap-2 animate-pulse hover:animate-none"
+										>
+											<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+												<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+											</svg>
+											SHARE YOUR WIN ON X!
+										</button>
+										<p className="text-xs text-center text-muted-foreground mt-2">
+											Let everyone know you won! 🎉
+										</p>
+									</div>
+								)}
+
+								{/* Creator Share CTA */}
+								{isCreator && lottery.isActive && (
+									<div className="pt-4 border-t border-white/10">
+										<button
+											onClick={handleShareToX}
+											className="w-full h-12 border-2 border-[#1DA1F2] text-[#1DA1F2] font-bold uppercase tracking-wider hover:bg-[#1DA1F2]/10 transition-all flex items-center justify-center gap-2"
+										>
+											<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+												<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+											</svg>
+											PROMOTE ON X
+										</button>
+										<p className="text-xs text-center text-muted-foreground mt-2">
+											Share to attract more players!
+										</p>
 									</div>
 								)}
 							</div>
