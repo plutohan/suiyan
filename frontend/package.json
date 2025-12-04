@@ -13,7 +13,6 @@
 		"@mysten/dapp-kit": "^0.19.9",
 		"@mysten/sui": "^1.45.0",
 		"@tanstack/react-query": "^5.63.0",
-		"@vercel/og": "^0.8.5",
 		"dataloader": "^2.2.3",
 		"js-sha3": "^0.9.3",
 		"lucide-react": "^0.555.0",

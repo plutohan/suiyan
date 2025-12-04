@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .container {
+      width: 1200px;
+      height: 630px;
+      position: relative;
+      background: #050508;
+    }
+
+    .bg-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(5,5,8,0.95) 0%, rgba(5,5,8,0.8) 45%, rgba(5,5,8,0.3) 100%);
+    }
+
+    .content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Bangers', cursive;
+      font-size: 80px;
+      color: #FFD700;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.3);
+      margin-bottom: 10px;
+    }
+
+    .tagline {
+      font-size: 32px;
+      color: #ffffff;
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+
+    .main-text {
+      font-family: 'Bangers', cursive;
+      font-size: 52px;
+      background: linear-gradient(135deg, #FFD700 0%, #00F0FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 30px;
+      letter-spacing: 0.02em;
+    }
+
+    .features {
+      display: flex;
+      gap: 40px;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .feature-gold {
+      color: #FFD700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .feature-cyan {
+      color: #00F0FF;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+
+    .feature-orange {
+      color: #FF4D00;
+      text-shadow: 0 0 20px rgba(255, 77, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img class="bg-image" src="../public/og-bg.png" alt="">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="logo">SUIYAN.FUN</div>
+      <div class="tagline">On-Chain Lottery on Sui</div>
+      <div class="main-text">PICK YOUR SLOT. WIN BIG!</div>
+      <div class="features">
+        <span class="feature-gold">Up to 1M $SUIYAN Prizes</span>
+        <span class="feature-cyan">Entry from 0.05 SUI</span>
+        <span class="feature-orange">Win Odds: 1/9 (11%)</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
