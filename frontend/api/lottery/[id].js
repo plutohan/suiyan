@@ -20,14 +20,8 @@ export default async function handler(req) {
 
   const available = parseInt(slots) - parseInt(filled)
 
-  // Build dynamic OG image URL
-  const ogParams = new URLSearchParams()
-  if (prize) ogParams.set('prize', prize)
-  if (prizeSui) ogParams.set('prizeSui', prizeSui)
-  if (fee) ogParams.set('fee', fee)
-  if (slots) ogParams.set('slots', slots)
-  if (filled) ogParams.set('filled', filled)
-  const ogImageUrl = `https://suiyan.fun/api/og${ogParams.toString() ? '?' + ogParams.toString() : ''}`
+  // Use static OG image (dynamic generation not supported on Vercel free tier)
+  const ogImageUrl = 'https://suiyan.fun/og-image.png'
 
   const title = prize
     ? `Win ${prize} SUIYAN - suiyan.fun Lottery`
