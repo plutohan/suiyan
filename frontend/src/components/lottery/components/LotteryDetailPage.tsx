@@ -167,12 +167,12 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 		// Format prize with SUI value
 		const prizeDisplay = prizeInSui
-			? `${lottery.prize} $SUIYAN (~${prizeInSui} SUI)`
+			? `${lottery.prize} $SUIYAN (~${prizeInSui} $SUI)`
 			: `${lottery.prize} $SUIYAN`
 
 		if (isWinner) {
 			// Winner sharing their victory - viral flex
-			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} SUI)` : ''
+			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} $SUI)` : ''
 			tweetText = `lmao i actually hit
 
 ${lottery.prize} $SUIYAN${wonSuiValue} gone in one click
@@ -182,11 +182,11 @@ stay tuned for the super $SUIYAN cycle @supersuiyan
 ${lotteryUrl}`
 		} else if (isCreator) {
 			// Creator promoting their lottery - degen energy
-			tweetText = `if you have sui, come play and get easy money
+			tweetText = `if you have $SUI, come play and get easy money
 
 ${prizeDisplay} sitting in my lottery rn
 
-${feeDisplay} SUI to win ${prizeInSui ? prizeInSui : lottery.prize} SUI
+${feeDisplay} $SUI to win ${prizeInSui ? prizeInSui : lottery.prize} $SUI
 
 stay tuned for the super $SUIYAN cycle @supersuiyan
 
@@ -203,11 +203,11 @@ https://suiyan.fun`
 		} else {
 			// Regular user sharing active lottery - urgency + FOMO
 			const oddsPercent = (100/slotsAvailable).toFixed(0)
-			tweetText = `if you have sui, come play and get easy money
+			tweetText = `if you have $SUI, come play and get easy money
 
 ${prizeDisplay} up for grabs rn
 
-${oddsPercent}% chance to win, ${feeDisplay} SUI to win ${prizeInSui ? prizeInSui : lottery.prize} SUI
+${oddsPercent}% chance to win, ${feeDisplay} $SUI to win ${prizeInSui ? prizeInSui : lottery.prize} $SUI
 
 stay tuned for the super $SUIYAN cycle @supersuiyan
 
