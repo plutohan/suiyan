@@ -527,7 +527,7 @@ ${lotteryUrl}`
 								{(() => {
 									// Check if user has enough balance (need fee + some gas buffer ~0.01 SUI)
 									const gasBuffer = BigInt(10_000_000) // 0.01 SUI
-									const hasInsufficientBalance = currentAccount && suiBalance !== null && suiBalance < BigInt(lottery.feeMist) + gasBuffer
+									const hasInsufficientBalance = !!(currentAccount && suiBalance !== null && suiBalance < BigInt(lottery.feeMist) + gasBuffer)
 
 									return (
 										<>
