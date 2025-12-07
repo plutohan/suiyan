@@ -32,12 +32,29 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 	const [showConfirm, setShowConfirm] = useState(false)
 	const [showConnectWallet, setShowConnectWallet] = useState(false)
 	const [statusMessage, setStatusMessage] = useState<string>("")
+	const [suiBalance, setSuiBalance] = useState<bigint | null>(null)
 	const { suiyanPerSui } = usePrice()
 
 	useEffect(() => {
 		setSelectedSlot(null)
 		window.scrollTo(0, 0)
 	}, [gameId])
+
+	// Fetch user's SUI balance
+	useEffect(() => {
+		if (!currentAccount) {
+			setSuiBalance(null)
+			return
+		}
+		const fetchBalance = async () => {
+			const balance = await suiClient.getBalance({
+				owner: currentAccount.address,
+				coinType: "0x2::sui::SUI",
+			})
+			setSuiBalance(BigInt(balance.totalBalance))
+		}
+		fetchBalance()
+	}, [currentAccount, suiClient])
 
 	useEffect(() => {
 		let isMounted = true
@@ -152,36 +169,39 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 			: `${lottery.prize} $SUIYAN`
 
 		if (isWinner) {
-			// Winner sharing their victory - exciting but clean
+			// Winner sharing their victory - viral flex
 			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} SUI)` : ''
-			tweetText = `just mass withdrew ${lottery.prize} $SUIYAN${wonSuiValue} from suiyan.fun
+			tweetText = `lmao i actually hit
 
-1/${totalSlots} odds. hit it first try.
+${lottery.prize} $SUIYAN${wonSuiValue} gone in one click
+
+@supersuiyan is unhinged
 
 ${lotteryUrl}`
 		} else if (isCreator) {
-			// Creator promoting their lottery - casual flex
-			tweetText = `dropped a lottery on suiyan.fun
+			// Creator promoting their lottery - degen energy
+			tweetText = `who wants free money
 
-${prizeDisplay} up for grabs
-${lottery.fee} SUI to enter
-${slotsAvailable} slots left
+${prizeDisplay} sitting in my @supersuiyan lottery rn
+
+${lottery.fee} SUI entry, ${slotsAvailable} slots, someone's walking away rich
 
 ${lotteryUrl}`
 		} else if (!lottery.isActive) {
-			// Sharing ended lottery
-			tweetText = `someone just won ${prizeDisplay} on suiyan.fun
+			// Sharing ended lottery - FOMO trigger
+			tweetText = `someone just hit ${prizeDisplay} on @supersuiyan
 
-create your own or catch the next one
+could've been you
 
 https://suiyan.fun`
 		} else {
-			// Regular user sharing active lottery - FOMO inducing
+			// Regular user sharing active lottery - urgency + FOMO
 			const oddsPercent = (100/slotsAvailable).toFixed(0)
-			tweetText = `${prizeDisplay} sitting in this lottery
+			tweetText = `${prizeDisplay} up for grabs rn
 
-${slotsAvailable} slots left = ${oddsPercent}% chance to win
-entry: ${lottery.fee} SUI
+${oddsPercent}% chance to win, ${lottery.fee} SUI to play
+
+@supersuiyan lottery is lowkey free money
 
 ${lotteryUrl}`
 		}
@@ -504,31 +524,50 @@ ${lotteryUrl}`
 									</div>
 								</div>
 
-								<button
-									onClick={() => {
-										if (selectedSlot === null || !isActive || lottery.slots[selectedSlot]) return
-										if (!currentAccount) {
-											setShowConnectWallet(true)
-											return
-										}
-										setShowConfirm(true)
-									}}
-									disabled={
-										!isActive ||
-										selectedSlot === null ||
-										lottery.slots[selectedSlot] ||
-										isSubmitting
-									}
-									className="w-full h-14 bg-gradient-to-r from-primary to-orange-500 text-black font-bold text-xl uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(255,215,0,0.3)] border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-								>
-									{!isActive
-										? "LOTTERY ENDED"
-										: selectedSlot === null
-										? "SELECT SLOT"
-										: lottery.slots[selectedSlot]
-										? "SLOT TAKEN"
-										: "PICK SLOT"}
-								</button>
+								{(() => {
+									// Check if user has enough balance (need fee + some gas buffer ~0.01 SUI)
+									const gasBuffer = BigInt(10_000_000) // 0.01 SUI
+									const hasInsufficientBalance = currentAccount && suiBalance !== null && suiBalance < BigInt(lottery.feeMist) + gasBuffer
+
+									return (
+										<>
+											<button
+												onClick={() => {
+													if (selectedSlot === null || !isActive || lottery.slots[selectedSlot]) return
+													if (!currentAccount) {
+														setShowConnectWallet(true)
+														return
+													}
+													if (hasInsufficientBalance) return
+													setShowConfirm(true)
+												}}
+												disabled={
+													!isActive ||
+													selectedSlot === null ||
+													lottery.slots[selectedSlot] ||
+													isSubmitting ||
+													hasInsufficientBalance
+												}
+												className="w-full h-14 bg-gradient-to-r from-primary to-orange-500 text-black font-bold text-xl uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_20px_rgba(255,215,0,0.3)] border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+											>
+												{!isActive
+													? "LOTTERY ENDED"
+													: hasInsufficientBalance
+													? "INSUFFICIENT BALANCE"
+													: selectedSlot === null
+													? "SELECT SLOT"
+													: lottery.slots[selectedSlot]
+													? "SLOT TAKEN"
+													: "PICK SLOT"}
+											</button>
+											{hasInsufficientBalance && (
+												<p className="text-xs text-red-400 text-center mt-2">
+													You need at least {lottery.fee} SUI to enter this lottery
+												</p>
+											)}
+										</>
+									)
+								})()}
 
 								{/* Collect Buttons */}
 								{(canCollectFee || canCollectPrize) && (
