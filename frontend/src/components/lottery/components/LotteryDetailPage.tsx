@@ -177,18 +177,18 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 ${lottery.prize} $SUIYAN${wonSuiValue} gone in one click
 
-it's the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle @supersuiyan
 
 ${lotteryUrl}`
 		} else if (isCreator) {
 			// Creator promoting their lottery - degen energy
-			tweetText = `come play the fair lottery on sui
+			tweetText = `if you have sui, come play and get easy money
 
 ${prizeDisplay} sitting in my lottery rn
 
-${feeDisplay} SUI entry, ${slotsAvailable} slots, someone's walking away rich
+${feeDisplay} SUI to win ${prizeInSui ? prizeInSui : lottery.prize} SUI
 
-it's the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle @supersuiyan
 
 ${lotteryUrl}`
 		} else if (!lottery.isActive) {
@@ -197,19 +197,19 @@ ${lotteryUrl}`
 
 could've been you
 
-it's the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle @supersuiyan
 
 https://suiyan.fun`
 		} else {
 			// Regular user sharing active lottery - urgency + FOMO
 			const oddsPercent = (100/slotsAvailable).toFixed(0)
-			tweetText = `come play the fair lottery on sui
+			tweetText = `if you have sui, come play and get easy money
 
 ${prizeDisplay} up for grabs rn
 
-${oddsPercent}% chance to win, ${feeDisplay} SUI to play
+${oddsPercent}% chance to win, ${feeDisplay} SUI to win ${prizeInSui ? prizeInSui : lottery.prize} SUI
 
-it's the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle @supersuiyan
 
 ${lotteryUrl}`
 		}
