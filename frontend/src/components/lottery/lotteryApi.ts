@@ -12,6 +12,8 @@ export type LotterySummary = {
 	prize: string
 	prizeMist: number
 	prizeValue: number
+	originalPrize: string
+	originalPrizeMist: number
 	fee: string
 	feeMist: number
 	feeValue: number
@@ -35,7 +37,8 @@ const parseLotteryFields = (
 	fields: any,
 	createdAt = "",
 	objectId = "",
-	createdAtMs = 0
+	createdAtMs = 0,
+	originalPrizeMist = 0
 ): LotterySummary => {
 	const slots = Array.isArray(fields.slots) ? fields.slots : []
 	const prize = Number(fields.prize || 0)
@@ -48,6 +51,8 @@ const parseLotteryFields = (
 
 	const resolvedId = objectId || fields.id?.id || fields.id || ""
 	const resolvedCreatedAtMs = createdAtMs || (createdAt ? Date.parse(createdAt) : 0)
+	// Use original prize from event if available, otherwise use current prize
+	const resolvedOriginalPrize = originalPrizeMist || prize
 
 	return {
 		id: resolvedId,
@@ -60,6 +65,8 @@ const parseLotteryFields = (
 		prize: rawToSuiyan(prize),  // SUIYAN has 6 decimals
 		prizeMist: prize,
 		prizeValue: Number(rawToSuiyan(prize)),
+		originalPrize: rawToSuiyan(resolvedOriginalPrize),
+		originalPrizeMist: resolvedOriginalPrize,
 		fee: mistToSui(fee),  // SUI has 9 decimals
 		feeMist: fee,
 		feeValue: Number(mistToSui(fee)),
@@ -76,7 +83,8 @@ export const fetchLotteryDetail = async (
 	client: SuiClient,
 	id: string,
 	createdAt = "",
-	createdAtMs = 0
+	createdAtMs = 0,
+	originalPrizeMist = 0
 ): Promise<LotterySummary | null> => {
 	const obj = await client.getObject({
 		id,
@@ -85,7 +93,28 @@ export const fetchLotteryDetail = async (
 
 	if (obj.data?.content && "fields" in obj.data.content) {
 		const fields = obj.data.content.fields as any
-		return parseLotteryFields(fields, createdAt, id, createdAtMs)
+
+		// If original prize not provided, try to fetch from creation event
+		let resolvedOriginalPrize = originalPrizeMist
+		if (!resolvedOriginalPrize) {
+			try {
+				const eventType = `${PACKAGE_ID}::lottery::LotteryCreatedEvent`
+				const events = await client.queryEvents({
+					query: { MoveEventType: eventType },
+					limit: 50,
+				})
+				const creationEvent = events.data.find(
+					(e: any) => e.parsedJson?.lottery_id === id
+				)
+				if (creationEvent?.parsedJson?.prize) {
+					resolvedOriginalPrize = Number(creationEvent.parsedJson.prize)
+				}
+			} catch {
+				// Ignore errors fetching event
+			}
+		}
+
+		return parseLotteryFields(fields, createdAt, id, createdAtMs, resolvedOriginalPrize)
 	}
 	return null
 }
@@ -123,15 +152,16 @@ export const fetchAllLotteries = async (
 
 	const uniqueLotteryMap = new Map<
 		string,
-		{ createdAt: string; createdAtMs: number }
+		{ createdAt: string; createdAtMs: number; originalPrizeMist: number }
 	>() // id -> metadata
 	sortedEvents.forEach((event) => {
 		if (event.parsedJson?.lottery_id) {
 			const lotteryId = event.parsedJson.lottery_id as string
 			const tsMs = Number(event.timestampMs || 0)
 			const createdAt = tsMs ? new Date(tsMs).toLocaleDateString() : ""
+			const originalPrizeMist = Number(event.parsedJson.prize || 0)
 			if (!uniqueLotteryMap.has(lotteryId)) {
-				uniqueLotteryMap.set(lotteryId, { createdAt, createdAtMs: tsMs })
+				uniqueLotteryMap.set(lotteryId, { createdAt, createdAtMs: tsMs, originalPrizeMist })
 			}
 		}
 	})
@@ -146,7 +176,7 @@ export const fetchAllLotteries = async (
 	const lotteries = await Promise.all(
 		pageIds.map((id) => {
 			const meta = uniqueLotteryMap.get(id)
-			return fetchLotteryDetail(client, id, meta?.createdAt || "", meta?.createdAtMs || 0)
+			return fetchLotteryDetail(client, id, meta?.createdAt || "", meta?.createdAtMs || 0, meta?.originalPrizeMist || 0)
 		})
 	)
 

@@ -155,10 +155,12 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 		const totalSlots = lottery.slotCount
 		const slotsAvailable = totalSlots - filledSlots
 
+		// Use original prize for winners (prize becomes 0 after claiming)
+		const prizeToShow = isWinner ? lottery.originalPrize : lottery.prize
 		// Calculate SUI value of prize (4 decimal places)
 		const prizeInSui = suiyanPerSui
 			? (
-					parseFloat(lottery.prize.replace(/,/g, "")) / suiyanPerSui
+					parseFloat(prizeToShow.replace(/,/g, "")) / suiyanPerSui
 			  ).toFixed(4)
 			: ""
 		// Format fee to 4 decimal places
@@ -169,17 +171,17 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 		// Format prize with SUI value
 		const prizeDisplay = prizeInSui
-			? `${lottery.prize} $SUIYAN (~${prizeInSui} $SUI)`
-			: `${lottery.prize} $SUIYAN`
+			? `${prizeToShow} $SUIYAN (~${prizeInSui} $SUI)`
+			: `${prizeToShow} $SUIYAN`
 
 		if (isWinner) {
 			// Winner sharing their victory - viral flex
 			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} $SUI)` : ""
-			tweetText = `lmao i actually hit
+			tweetText = `no way i actually won
 
-${lottery.prize} $SUIYAN${wonSuiValue} gone in one click
+${prizeToShow} $SUIYAN${wonSuiValue} just hit my wallet
 
-stay tuned for the super $SUIYAN cycle. @supersuiyan @SuiNetwork 
+stay tuned for the super $SUIYAN cycle. @supersuiyan @SuiNetwork
 
 ${lotteryUrl}`
 		} else if (isCreator) {
