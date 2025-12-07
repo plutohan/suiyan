@@ -154,14 +154,14 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 		if (isWinner) {
 			// Winner sharing their victory - exciting but clean
 			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} SUI)` : ''
-			tweetText = `just mass withdrew ${lottery.prize} $SUIYAN${wonSuiValue} from @suiyan_fun
+			tweetText = `just mass withdrew ${lottery.prize} $SUIYAN${wonSuiValue} from suiyan.fun
 
 1/${totalSlots} odds. hit it first try.
 
 ${lotteryUrl}`
 		} else if (isCreator) {
 			// Creator promoting their lottery - casual flex
-			tweetText = `dropped a lottery on @suiyan_fun
+			tweetText = `dropped a lottery on suiyan.fun
 
 ${prizeDisplay} up for grabs
 ${lottery.fee} SUI to enter
@@ -170,7 +170,7 @@ ${slotsAvailable} slots left
 ${lotteryUrl}`
 		} else if (!lottery.isActive) {
 			// Sharing ended lottery
-			tweetText = `someone just won ${prizeDisplay} on @suiyan_fun
+			tweetText = `someone just won ${prizeDisplay} on suiyan.fun
 
 create your own or catch the next one
 
@@ -182,8 +182,6 @@ https://suiyan.fun`
 
 ${slotsAvailable} slots left = ${oddsPercent}% chance to win
 entry: ${lottery.fee} SUI
-
-@suiyan_fun
 
 ${lotteryUrl}`
 		}
