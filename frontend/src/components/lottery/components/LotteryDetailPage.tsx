@@ -151,14 +151,16 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 	const handleShareToX = () => {
 		if (!lottery) return
 
-		const filledSlots = lottery.slots.filter(s => s).length
+		const filledSlots = lottery.slots.filter((s) => s).length
 		const totalSlots = lottery.slotCount
 		const slotsAvailable = totalSlots - filledSlots
 
 		// Calculate SUI value of prize (4 decimal places)
 		const prizeInSui = suiyanPerSui
-			? (parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(4)
-			: ''
+			? (
+					parseFloat(lottery.prize.replace(/,/g, "")) / suiyanPerSui
+			  ).toFixed(4)
+			: ""
 		// Format fee to 4 decimal places
 		const feeDisplay = parseFloat(lottery.fee).toFixed(4)
 		const lotteryUrl = `https://suiyan.fun/lottery/${gameId}`
@@ -172,12 +174,12 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 		if (isWinner) {
 			// Winner sharing their victory - viral flex
-			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} $SUI)` : ''
+			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} $SUI)` : ""
 			tweetText = `lmao i actually hit
 
 ${lottery.prize} $SUIYAN${wonSuiValue} gone in one click
 
-stay tuned for the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle. @supersuiyan @SuiNetwork 
 
 ${lotteryUrl}`
 		} else if (isCreator) {
@@ -188,7 +190,7 @@ ${prizeDisplay} sitting in my lottery rn
 
 ${feeDisplay} $SUI to win ${prizeInSui ? prizeInSui : lottery.prize} $SUI
 
-stay tuned for the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle. @supersuiyan @SuiNetwork 
 
 ${lotteryUrl}`
 		} else if (!lottery.isActive) {
@@ -197,25 +199,29 @@ ${lotteryUrl}`
 
 could've been you
 
-stay tuned for the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle. @supersuiyan @SuiNetwork 
 
 https://suiyan.fun`
 		} else {
 			// Regular user sharing active lottery - urgency + FOMO
-			const oddsPercent = (100/slotsAvailable).toFixed(0)
+			const oddsPercent = (100 / slotsAvailable).toFixed(0)
 			tweetText = `if you have $SUI, come play and get easy money
 
 ${prizeDisplay} up for grabs rn
 
-${oddsPercent}% chance to win, ${feeDisplay} $SUI to win ${prizeInSui ? prizeInSui : lottery.prize} $SUI
+${oddsPercent}% chance to win, ${feeDisplay} $SUI to win ${
+				prizeInSui ? prizeInSui : lottery.prize
+			} $SUI
 
-stay tuned for the super $SUIYAN cycle @supersuiyan
+stay tuned for the super $SUIYAN cycle. @supersuiyan @SuiNetwork 
 
 ${lotteryUrl}`
 		}
 
-		const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
-		window.open(twitterUrl, '_blank', 'width=550,height=420')
+		const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+			tweetText
+		)}`
+		window.open(twitterUrl, "_blank", "width=550,height=420")
 	}
 
 	const handleCollectFee = async () => {
@@ -352,8 +358,12 @@ ${lotteryUrl}`
 							className="h-10 px-4 border border-[#1DA1F2]/50 text-[#1DA1F2] bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20 rounded-none font-mono inline-flex items-center gap-2 transition-all hover:scale-105"
 							title="Share on X (Twitter)"
 						>
-							<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-								<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+							<svg
+								className="w-4 h-4"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+							>
+								<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
 							</svg>
 							<span className="hidden sm:inline">Share</span>
 						</button>
@@ -428,7 +438,9 @@ ${lotteryUrl}`
 						<div className="relative border border-primary/20 p-6 rounded-sm overflow-hidden">
 							<div
 								className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-								style={{ backgroundImage: "url('/prize-bg.jpg')" }}
+								style={{
+									backgroundImage: "url('/prize-bg.jpg')",
+								}}
 							/>
 							<div className="absolute inset-0 bg-black/80" />
 
@@ -444,7 +456,13 @@ ${lotteryUrl}`
 								</h3>
 								{suiyanPerSui && (
 									<p className="text-muted-foreground font-mono text-sm mb-1">
-										≈ {(parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(4)} $SUI
+										≈{" "}
+										{(
+											parseFloat(
+												lottery.prize.replace(/,/g, "")
+											) / suiyanPerSui
+										).toFixed(4)}{" "}
+										$SUI
 									</p>
 								)}
 								<p className="text-secondary font-mono text-sm tracking-wide mb-6">
@@ -475,15 +493,19 @@ ${lotteryUrl}`
 										</div>
 									</div>
 									{isActive && availableSlots > 0 && (
-									<div className="space-y-1">
-										<div className="text-xs text-muted-foreground uppercase">
-											Win Odds
+										<div className="space-y-1">
+											<div className="text-xs text-muted-foreground uppercase">
+												Win Odds
+											</div>
+											<div className="text-xl font-bold text-green-400 flex items-center gap-1">
+												1/{availableSlots} (
+												{(100 / availableSlots).toFixed(
+													1
+												)}
+												%)
+											</div>
 										</div>
-										<div className="text-xl font-bold text-green-400 flex items-center gap-1">
-											1/{availableSlots} ({(100 / availableSlots).toFixed(1)}%)
-										</div>
-									</div>
-								)}
+									)}
 									<div className="space-y-1">
 										<div className="text-xs text-muted-foreground uppercase">
 											Creator Fee
@@ -526,7 +548,12 @@ ${lotteryUrl}`
 										</span>
 										{suiyanPerSui && (
 											<p className="text-xs text-muted-foreground font-mono">
-												≈ {Math.round(parseFloat(lottery.fee) * suiyanPerSui).toLocaleString()} $SUIYAN
+												≈{" "}
+												{Math.round(
+													parseFloat(lottery.fee) *
+														suiyanPerSui
+												).toLocaleString()}{" "}
+												$SUIYAN
 											</p>
 										)}
 									</div>
@@ -535,24 +562,41 @@ ${lotteryUrl}`
 								{(() => {
 									// Check if user has enough balance (need fee + some gas buffer ~0.01 SUI)
 									const gasBuffer = BigInt(10_000_000) // 0.01 SUI
-									const hasInsufficientBalance = !!(currentAccount && suiBalance !== null && suiBalance < BigInt(lottery.feeMist) + gasBuffer)
+									const hasInsufficientBalance = !!(
+										currentAccount &&
+										suiBalance !== null &&
+										suiBalance <
+											BigInt(lottery.feeMist) + gasBuffer
+									)
 
 									return (
 										<>
 											<button
 												onClick={() => {
-													if (selectedSlot === null || !isActive || lottery.slots[selectedSlot]) return
+													if (
+														selectedSlot === null ||
+														!isActive ||
+														lottery.slots[
+															selectedSlot
+														]
+													)
+														return
 													if (!currentAccount) {
-														setShowConnectWallet(true)
+														setShowConnectWallet(
+															true
+														)
 														return
 													}
-													if (hasInsufficientBalance) return
+													if (hasInsufficientBalance)
+														return
 													setShowConfirm(true)
 												}}
 												disabled={
 													!isActive ||
 													selectedSlot === null ||
-													lottery.slots[selectedSlot] ||
+													lottery.slots[
+														selectedSlot
+													] ||
 													isSubmitting ||
 													hasInsufficientBalance
 												}
@@ -564,13 +608,17 @@ ${lotteryUrl}`
 													? "INSUFFICIENT BALANCE"
 													: selectedSlot === null
 													? "SELECT SLOT"
-													: lottery.slots[selectedSlot]
+													: lottery.slots[
+															selectedSlot
+													  ]
 													? "SLOT TAKEN"
 													: "PICK SLOT"}
 											</button>
 											{hasInsufficientBalance && (
 												<p className="text-xs text-red-400 text-center mt-2">
-													You need at least {lottery.fee} SUI to enter this lottery
+													You need at least{" "}
+													{lottery.fee} SUI to enter
+													this lottery
 												</p>
 											)}
 										</>
@@ -613,8 +661,12 @@ ${lotteryUrl}`
 											onClick={handleShareToX}
 											className="w-full h-12 bg-[#1DA1F2] text-white font-bold uppercase tracking-wider hover:bg-[#1a8cd8] transition-all flex items-center justify-center gap-2 animate-pulse hover:animate-none"
 										>
-											<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-												<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+											<svg
+												className="w-5 h-5"
+												viewBox="0 0 24 24"
+												fill="currentColor"
+											>
+												<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
 											</svg>
 											SHARE YOUR WIN ON X!
 										</button>
@@ -631,8 +683,12 @@ ${lotteryUrl}`
 											onClick={handleShareToX}
 											className="w-full h-12 border-2 border-[#1DA1F2] text-[#1DA1F2] font-bold uppercase tracking-wider hover:bg-[#1DA1F2]/10 transition-all flex items-center justify-center gap-2"
 										>
-											<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-												<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+											<svg
+												className="w-5 h-5"
+												viewBox="0 0 24 24"
+												fill="currentColor"
+											>
+												<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
 											</svg>
 											PROMOTE ON X
 										</button>
@@ -696,7 +752,13 @@ ${lotteryUrl}`
 									</span>
 									{suiyanPerSui && (
 										<p className="text-xs text-muted-foreground font-mono">
-											≈ {Math.round(parseFloat(mistToSui(lottery.feeMist)) * suiyanPerSui).toLocaleString()} $SUIYAN
+											≈{" "}
+											{Math.round(
+												parseFloat(
+													mistToSui(lottery.feeMist)
+												) * suiyanPerSui
+											).toLocaleString()}{" "}
+											$SUIYAN
 										</p>
 									)}
 								</div>
