@@ -6,6 +6,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Chakra+Petch:wght@400;600;700&display=swap');
+
     * {
       margin: 0;
       padding: 0;
@@ -123,6 +125,12 @@
     .dot-gold { background: #FFD700; }
     .dot-cyan { background: #00F0FF; }
   </style>
+  <script>
+    // Wait for fonts to load
+    document.fonts.ready.then(function() {
+      console.log('Fonts loaded');
+    });
+  </script>
 </head>
 <body>
   <div class="container">
