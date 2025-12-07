@@ -1,5 +1,6 @@
 // This API endpoint serves dynamic HTML with proper OG tags for lottery pages
 // Social crawlers will hit this and get the right meta tags
+// Uses static OG image since dynamic generation had issues
 
 export const config = {
   runtime: 'edge',
@@ -17,22 +18,17 @@ export default async function handler(req) {
   const slots = url.searchParams.get('slots') || '9'
   const filled = url.searchParams.get('filled') || '0'
 
-  // Build OG image URL with params
-  const ogImageParams = new URLSearchParams()
-  if (prize) ogImageParams.set('prize', prize)
-  if (prizeSui) ogImageParams.set('prizeSui', prizeSui)
-  if (fee) ogImageParams.set('fee', fee)
-  if (slots) ogImageParams.set('slots', slots)
-  if (filled) ogImageParams.set('filled', filled)
-
-  const ogImageUrl = `https://suiyan.fun/api/og${ogImageParams.toString() ? '?' + ogImageParams.toString() : ''}`
-
   const available = parseInt(slots) - parseInt(filled)
+
+  // Use static OG image
+  const ogImageUrl = 'https://suiyan.fun/og-image.png'
+
   const title = prize
     ? `Win ${prize} SUIYAN - suiyan.fun Lottery`
     : 'suiyan.fun - On-Chain Lottery on Sui'
+
   const description = prize && fee
-    ? `Prize: ${prize} SUIYAN (~${prizeSui} SUI) | Entry: ${fee} SUI | Win odds: 1/${available} (${(100/available).toFixed(0)}%)`
+    ? `🏆 Prize: ${prize} SUIYAN${prizeSui ? ` (~${prizeSui} SUI)` : ''} | ⚡ Entry: ${fee} SUI | 🎯 Win odds: 1/${available} (${(100/available).toFixed(0)}%) | Pick your slot and win big!`
     : 'Pick your slot, win big! Decentralized lottery game with up to 1,000,000 $SUIYAN prizes.'
 
   // Return HTML that redirects to the SPA but has correct OG tags
@@ -60,7 +56,7 @@ export default async function handler(req) {
   <meta name="twitter:image" content="${ogImageUrl}">
 
   <!-- Redirect to SPA for real users (crawlers don't execute JS) -->
-  <script>window.location.href = '/lottery/${lotteryId}';</script>
+  <script>window.location.replace('/lottery/${lotteryId}');</script>
   <noscript>
     <meta http-equiv="refresh" content="0;url=/lottery/${lotteryId}">
   </noscript>
