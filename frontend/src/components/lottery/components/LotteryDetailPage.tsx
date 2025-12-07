@@ -134,10 +134,23 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 	const handleShareToX = () => {
 		if (!lottery) return
 
-		const lotteryUrl = `https://suiyan.fun/lottery/${gameId}`
 		const filledSlots = lottery.slots.filter(s => s).length
 		const totalSlots = lottery.slotCount
 		const slotsAvailable = totalSlots - filledSlots
+
+		// Build share URL with lottery params for dynamic OG image
+		const prizeInSui = suiyanPerSui
+			? (parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(2)
+			: ''
+		const ogParams = new URLSearchParams({
+			prize: lottery.prize,
+			prizeSui: prizeInSui,
+			fee: lottery.fee,
+			slots: totalSlots.toString(),
+			filled: filledSlots.toString(),
+		})
+		// Use /share/lottery/ for social media (dynamic OG tags), redirects to /lottery/
+		const lotteryUrl = `https://suiyan.fun/share/lottery/${gameId}?${ogParams.toString()}`
 
 		let tweetText = ""
 
