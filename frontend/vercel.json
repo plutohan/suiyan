@@ -1,6 +1,11 @@
 {
+  "functions": {
+    "api/lottery/[id].js": {
+      "runtime": "edge"
+    }
+  },
   "rewrites": [
     { "source": "/share/lottery/:id", "destination": "/api/lottery/:id" },
-    { "source": "/(.*)", "destination": "/" }
+    { "source": "/((?!api/).*)", "destination": "/" }
   ]
 }
