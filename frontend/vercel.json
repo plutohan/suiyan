@@ -1,11 +1,14 @@
 {
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
   "functions": {
-    "api/lottery/[id].js": {
+    "api/**/*.js": {
       "runtime": "edge"
     }
   },
   "rewrites": [
     { "source": "/share/lottery/:id", "destination": "/api/lottery/:id" },
-    { "source": "/((?!api/).*)", "destination": "/" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
