@@ -155,61 +155,45 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 		let tweetText = ""
 
 		// Format prize with SUI value
-		const prizeWithSui = prizeInSui
-			? `${lottery.prize} $SUIYAN (~${prizeInSui} $SUI)`
+		const prizeDisplay = prizeInSui
+			? `${lottery.prize} $SUIYAN (~${prizeInSui} SUI)`
 			: `${lottery.prize} $SUIYAN`
 
 		if (isWinner) {
-			// Winner sharing their victory
-			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} $SUI)` : ''
-			tweetText = `🏆 I JUST WON ${lottery.prize} $SUIYAN${wonSuiValue} on @suiyan_fun! 🎰
+			// Winner sharing their victory - exciting but clean
+			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} SUI)` : ''
+			tweetText = `just mass withdrew ${lottery.prize} $SUIYAN${wonSuiValue} from @suiyan_fun
 
-The odds were 1/${totalSlots} and I hit the jackpot! 💰
+1/${totalSlots} odds. hit it first try.
 
-Think you're lucky? Try your luck 👇
-${lotteryUrl}
-
-#Sui #SUIYAN #Crypto #Web3 #Lottery`
+${lotteryUrl}`
 		} else if (isCreator) {
-			// Creator promoting their lottery
-			tweetText = `🎰 I just created a lottery on @suiyan_fun!
+			// Creator promoting their lottery - casual flex
+			tweetText = `dropped a lottery on @suiyan_fun
 
-💰 Prize: ${prizeWithSui}
-⚡ Entry: ${lottery.fee} $SUI
-🎯 Slots: ${slotsAvailable}/${totalSlots} available
-📊 Win odds: 1/${slotsAvailable} (${(100/slotsAvailable).toFixed(1)}%)
+${prizeDisplay} up for grabs
+${lottery.fee} SUI to enter
+${slotsAvailable} slots left
 
-Feeling lucky? 🍀
-${lotteryUrl}
-
-#Sui #SUIYAN #Crypto #Web3`
+${lotteryUrl}`
 		} else if (!lottery.isActive) {
 			// Sharing ended lottery
-			const pastPrizeWithSui = prizeInSui
-				? `${lottery.prize} $SUIYAN (~${prizeInSui} $SUI)`
-				: `${lottery.prize} $SUIYAN`
-			tweetText = `🎰 Check out this lottery on @suiyan_fun!
+			tweetText = `someone just won ${prizeDisplay} on @suiyan_fun
 
-💰 Prize was ${pastPrizeWithSui}
-🏆 Someone won big!
+create your own or catch the next one
 
-Create your own or join the next one 👇
-https://suiyan.fun
-
-#Sui #SUIYAN #Crypto #Web3`
+https://suiyan.fun`
 		} else {
-			// Regular user sharing active lottery
-			tweetText = `🎰 Found this lottery on @suiyan_fun!
+			// Regular user sharing active lottery - FOMO inducing
+			const oddsPercent = (100/slotsAvailable).toFixed(0)
+			tweetText = `${prizeDisplay} sitting in this lottery
 
-💰 Prize: ${prizeWithSui}
-⚡ Entry: ${lottery.fee} $SUI
-🎯 Only ${slotsAvailable} slots left!
-📊 Win odds: 1/${slotsAvailable} (${(100/slotsAvailable).toFixed(1)}%)
+${slotsAvailable} slots left = ${oddsPercent}% chance to win
+entry: ${lottery.fee} SUI
 
-Who's feeling lucky? 🍀
-${lotteryUrl}
+@suiyan_fun
 
-#Sui #SUIYAN #Crypto #Web3 #Lottery`
+${lotteryUrl}`
 		}
 
 		const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`
