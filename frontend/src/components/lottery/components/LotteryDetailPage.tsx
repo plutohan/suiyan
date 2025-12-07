@@ -155,10 +155,12 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 		const totalSlots = lottery.slotCount
 		const slotsAvailable = totalSlots - filledSlots
 
-		// Calculate SUI value of prize
+		// Calculate SUI value of prize (4 decimal places)
 		const prizeInSui = suiyanPerSui
-			? (parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(2)
+			? (parseFloat(lottery.prize.replace(/,/g, '')) / suiyanPerSui).toFixed(4)
 			: ''
+		// Format fee to 4 decimal places
+		const feeDisplay = parseFloat(lottery.fee).toFixed(4)
 		const lotteryUrl = `https://suiyan.fun/lottery/${gameId}`
 
 		let tweetText = ""
@@ -175,33 +177,39 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 ${lottery.prize} $SUIYAN${wonSuiValue} gone in one click
 
-@supersuiyan is unhinged
+it's the super $SUIYAN cycle @supersuiyan
 
 ${lotteryUrl}`
 		} else if (isCreator) {
 			// Creator promoting their lottery - degen energy
-			tweetText = `who wants free money
+			tweetText = `come play the fair lottery on sui
 
-${prizeDisplay} sitting in my @supersuiyan lottery rn
+${prizeDisplay} sitting in my lottery rn
 
-${lottery.fee} SUI entry, ${slotsAvailable} slots, someone's walking away rich
+${feeDisplay} SUI entry, ${slotsAvailable} slots, someone's walking away rich
+
+it's the super $SUIYAN cycle @supersuiyan
 
 ${lotteryUrl}`
 		} else if (!lottery.isActive) {
 			// Sharing ended lottery - FOMO trigger
-			tweetText = `someone just hit ${prizeDisplay} on @supersuiyan
+			tweetText = `someone just hit ${prizeDisplay}
 
 could've been you
+
+it's the super $SUIYAN cycle @supersuiyan
 
 https://suiyan.fun`
 		} else {
 			// Regular user sharing active lottery - urgency + FOMO
 			const oddsPercent = (100/slotsAvailable).toFixed(0)
-			tweetText = `${prizeDisplay} up for grabs rn
+			tweetText = `come play the fair lottery on sui
 
-${oddsPercent}% chance to win, ${lottery.fee} SUI to play
+${prizeDisplay} up for grabs rn
 
-@supersuiyan lottery is lowkey free money
+${oddsPercent}% chance to win, ${feeDisplay} SUI to play
+
+it's the super $SUIYAN cycle @supersuiyan
 
 ${lotteryUrl}`
 		}
