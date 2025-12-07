@@ -154,9 +154,15 @@ const LotteryDetailPage: FC<Props> = ({ gameId }) => {
 
 		let tweetText = ""
 
+		// Format prize with SUI value
+		const prizeWithSui = prizeInSui
+			? `${lottery.prize} $SUIYAN (~${prizeInSui} $SUI)`
+			: `${lottery.prize} $SUIYAN`
+
 		if (isWinner) {
 			// Winner sharing their victory
-			tweetText = `🏆 I JUST WON ${lottery.prize} $SUIYAN on @suiyan_fun! 🎰
+			const wonSuiValue = prizeInSui ? ` (~${prizeInSui} $SUI)` : ''
+			tweetText = `🏆 I JUST WON ${lottery.prize} $SUIYAN${wonSuiValue} on @suiyan_fun! 🎰
 
 The odds were 1/${totalSlots} and I hit the jackpot! 💰
 
@@ -168,7 +174,7 @@ ${lotteryUrl}
 			// Creator promoting their lottery
 			tweetText = `🎰 I just created a lottery on @suiyan_fun!
 
-💰 Prize: ${lottery.prize} $SUIYAN
+💰 Prize: ${prizeWithSui}
 ⚡ Entry: ${lottery.fee} $SUI
 🎯 Slots: ${slotsAvailable}/${totalSlots} available
 📊 Win odds: 1/${slotsAvailable} (${(100/slotsAvailable).toFixed(1)}%)
@@ -179,9 +185,12 @@ ${lotteryUrl}
 #Sui #SUIYAN #Crypto #Web3`
 		} else if (!lottery.isActive) {
 			// Sharing ended lottery
+			const pastPrizeWithSui = prizeInSui
+				? `${lottery.prize} $SUIYAN (~${prizeInSui} $SUI)`
+				: `${lottery.prize} $SUIYAN`
 			tweetText = `🎰 Check out this lottery on @suiyan_fun!
 
-💰 Prize was ${lottery.prize} $SUIYAN
+💰 Prize was ${pastPrizeWithSui}
 🏆 Someone won big!
 
 Create your own or join the next one 👇
@@ -192,7 +201,7 @@ https://suiyan.fun
 			// Regular user sharing active lottery
 			tweetText = `🎰 Found this lottery on @suiyan_fun!
 
-💰 Prize: ${lottery.prize} $SUIYAN
+💰 Prize: ${prizeWithSui}
 ⚡ Entry: ${lottery.fee} $SUI
 🎯 Only ${slotsAvailable} slots left!
 📊 Win odds: 1/${slotsAvailable} (${(100/slotsAvailable).toFixed(1)}%)
