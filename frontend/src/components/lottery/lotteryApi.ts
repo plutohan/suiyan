@@ -106,8 +106,9 @@ export const fetchLotteryDetail = async (
 				const creationEvent = events.data.find(
 					(e: any) => e.parsedJson?.lottery_id === id
 				)
-				if (creationEvent?.parsedJson?.prize) {
-					resolvedOriginalPrize = Number(creationEvent.parsedJson.prize)
+				const eventJson = creationEvent?.parsedJson as { prize?: string | number } | undefined
+				if (eventJson?.prize) {
+					resolvedOriginalPrize = Number(eventJson.prize)
 				}
 			} catch {
 				// Ignore errors fetching event
